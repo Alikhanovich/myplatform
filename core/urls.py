@@ -12,6 +12,8 @@ urlpatterns = [
     path("contact/", views.ContactView.as_view(), name="contact"),
 
     # ── Custom Admin Panel ──────────────────────────────────────────────
+    path("admin-panel/login/", views_api.admin_login_view, name="admin_login"),
+    path("admin-panel/logout/", views_api.admin_logout_view, name="admin_logout"),
     path("admin-panel/", views_api.admin_panel_view, name="admin_panel"),
 
     # API endpoints (faqat login + staff/superuser)

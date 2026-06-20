@@ -10,11 +10,12 @@ Tizimga kirmaganlar Django admin login sahifasiga yo'naltiriladi.
 import json
 from functools import wraps
 
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 
@@ -34,17 +35,57 @@ from core.models import (
 def superuser_required(view_func):
     """
     Faqat login bo'lgan staff/superuser kirishi mumkin bo'lgan dekorator.
-    Login kerak bo'lganda Django admin login sahifasiga yo'naltiradi.
+    Login kerak bo'lganda maxsus admin login sahifasiga (/admin-panel/login/) yo'naltiradi.
     """
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        admin_login = '/' + settings.ADMIN_URL + 'login/'
+        admin_login = reverse("core:admin_login")
         if not request.user.is_authenticated:
-            return redirect(admin_login + '?next=' + request.path)
+            return redirect(f"{admin_login}?next={request.path}")
         if not (request.user.is_staff or request.user.is_superuser):
             return redirect(admin_login)
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+@ensure_csrf_cookie
+def admin_login_view(request):
+    """
+    Maxsus admin login sahifasi (/admin-panel/login/).
+
+    Muvaffaqiyatli kirgandan keyin /admin-panel/ ga (yoki ?next= ga) yo'naltiradi.
+    Faqat staff/superuser kira oladi.
+    """
+    panel_url = reverse("core:admin_panel")
+    # Allaqachon kirgan staff -> to'g'ridan-to'g'ri panelga
+    if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+        return redirect(panel_url)
+
+    error = None
+    next_url = request.POST.get("next") or request.GET.get("next") or ""
+    if request.method == "POST":
+        username = request.POST.get("login", "").strip()
+        password = request.POST.get("password", "")
+        user = authenticate(request, username=username, password=password)
+        if user is not None and (user.is_staff or user.is_superuser):
+            login(request, user)
+            # Ochiq redirect'dan himoya: faqat shu saytning ichki URL'iga.
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(next_url)
+            return redirect(panel_url)
+        error = "Login yoki parol noto'g'ri, yoki sizda ruxsat yo'q."
+
+    return render(request, "admin/login.html", {"error": error, "next": next_url})
+
+
+def admin_logout_view(request):
+    """Admin paneldan chiqish -> login sahifasiga."""
+    logout(request)
+    return redirect("core:admin_login")
 
 
 @ensure_csrf_cookie

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Abbosxon Boboxodjayev</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+{% verbatim %}
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#282a2f",
+                    "on-primary-container": "#603a00",
+                    "on-surface": "#e2e2e9",
+                    "terminal-bg": "#16181D",
+                    "on-background": "#e2e2e9",
+                    "ghost-text": "#4A4D55",
+                    "on-tertiary-fixed": "#001e31",
+                    "on-surface-variant": "#d5c4b3",
+                    "secondary-fixed-dim": "#c7c6c6",
+                    "surface-tint": "#fabb6c",
+                    "surface-variant": "#33353a",
+                    "background": "#111318",
+                    "on-primary-fixed": "#2a1700",
+                    "on-tertiary": "#003350",
+                    "inverse-on-surface": "#2e3036",
+                    "on-primary": "#472a00",
+                    "on-secondary": "#303031",
+                    "surface-dim": "#111318",
+                    "outline-variant": "#504538",
+                    "secondary": "#c7c6c6",
+                    "surface": "#111318",
+                    "outline": "#9d8e7f",
+                    "on-secondary-fixed-variant": "#464747",
+                    "surface-container-highest": "#33353a",
+                    "tertiary": "#9bd0ff",
+                    "on-tertiary-container": "#00466c",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "tertiary-fixed-dim": "#94ccfc",
+                    "primary-fixed-dim": "#fabb6c",
+                    "tertiary-container": "#7db5e4",
+                    "on-error": "#690005",
+                    "surface-container-lowest": "#0c0e13",
+                    "inverse-primary": "#83540c",
+                    "secondary-container": "#464747",
+                    "on-secondary-container": "#b5b5b5",
+                    "inverse-surface": "#e2e2e9",
+                    "on-primary-fixed-variant": "#653e00",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#37393f",
+                    "error-container": "#93000a",
+                    "amber-glow": "#E0A458",
+                    "primary-container": "#e0a458",
+                    "primary": "#ffbf70",
+                    "surface-container": "#1e2025",
+                    "secondary-fixed": "#e3e2e2",
+                    "tertiary-fixed": "#cce5ff",
+                    "primary-fixed": "#ffddb8",
+                    "surface-stroke": "#2A2D35",
+                    "surface-container-low": "#1a1b21",
+                    "on-tertiary-fixed-variant": "#004b72"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "0.5rem",
+                    "gutter": "1.5rem",
+                    "section-gap": "8rem",
+                    "stack-md": "1.5rem",
+                    "grid-margin": "4rem"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "display-xl": ["Space Grotesk"],
+                    "label-sm": ["JetBrains Mono"],
+                    "section-num": ["Space Grotesk"],
+                    "body-md": ["JetBrains Mono"],
+                    "data-point": ["JetBrains Mono"],
+                    "headline-lg": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "display-xl": ["80px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                    "section-num": ["120px", {"lineHeight": "1", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "data-point": ["14px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .blueprint-grid {
+            background-image: linear-gradient(to right, #2A2D35 1px, transparent 1px),
+                              linear-gradient(to bottom, #2A2D35 1px, transparent 1px);
+            background-size: 4rem 4rem;
+            background-position: center center;
+        }
+        .constellation-lines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M100 100 L300 200 L500 150 M300 200 L400 400 L600 300' stroke='%23e0a458' stroke-width='1' fill='none' /%3E%3Ccircle cx='100' cy='100' r='2' fill='%23e0a458'/%3E%3Ccircle cx='300' cy='200' r='2' fill='%23e0a458'/%3E%3Ccircle cx='500' cy='150' r='2' fill='%23e0a458'/%3E%3Ccircle cx='400' cy='400' r='2' fill='%23e0a458'/%3E%3Ccircle cx='600' cy='300' r='2' fill='%23e0a458'/%3E%3C/svg%3E");
+            background-size: cover;
+        }
+    </style>
+{% endverbatim %}
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-background">
+<!-- TopNavBar Component -->
+<header class="w-full z-50 fixed top-0 bg-background/80 backdrop-blur-md dark:bg-background/80 border-b border-surface-stroke dark:border-surface-stroke">
+<div class="flex justify-between items-center w-full px-gutter py-4 max-w-full mx-auto">
+<a href="/" class="font-label-sm text-label-sm font-bold text-on-surface dark:text-on-surface flex items-center gap-2">
+<span class="w-2 h-2 bg-primary-container rounded-full inline-block"></span>
+                Abbosxon Boboxodjayev
+            </a>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-200" href="/#experience">TAJRIBA</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-200" href="/#skills">KO'NIKMA</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-200" href="/projects/">LOYIHA</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-200" href="/blog/">YOZUV</a>
+</nav>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-200 flex items-center gap-1" href="/#contact">
+                ALOQA <span class="material-symbols-outlined text-[16px]">north_east</span>
+</a>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex items-center justify-center relative pt-24 pb-12 px-gutter overflow-hidden blueprint-grid">
+<!-- Abstract Background Pattern -->
+<div class="constellation-lines"></div>
+<div class="w-full max-w-lg z-10">
+<!-- Login Card -->
+<div class="border border-surface-stroke bg-surface-container/40 backdrop-blur-md p-8 md:p-12 relative group">
+<!-- Hover highlight effect -->
+<div class="absolute inset-0 border border-primary-container opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
+<div class="mb-12 flex flex-col gap-2">
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-widest">// TIZIMGA KIRISH</span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">07 // KIRISH</h1>
+</div>
+{% if error %}
+<div class="mb-8 border border-error/40 bg-error-container/20 text-error font-label-sm text-label-sm px-4 py-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">error</span>{{ error }}
+</div>
+{% endif %}
+<form action="" class="flex flex-col gap-8" method="POST">
+{% csrf_token %}
+<input type="hidden" name="next" value="{{ next }}"/>
+<!-- Login Input -->
+<div class="flex flex-col gap-2 relative">
+<label class="font-label-sm text-label-sm text-ghost-text uppercase tracking-widest" for="login">LOGIN</label>
+<input class="bg-transparent border-0 border-b border-surface-stroke focus:border-primary-container focus:ring-0 text-on-surface font-data-point px-0 py-2 w-full transition-colors" id="login" name="login" placeholder="foydalanuvchi_nomi" required="" type="text" autofocus/>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-2 relative">
+<div class="flex justify-between items-end">
+<label class="font-label-sm text-label-sm text-ghost-text uppercase tracking-widest" for="password">PAROL</label>
+</div>
+<input class="bg-transparent border-0 border-b border-surface-stroke focus:border-primary-container focus:ring-0 text-on-surface font-data-point px-0 py-2 w-full transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<!-- Actions -->
+<div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-6">
+<button class="w-full sm:w-auto border border-primary-container text-primary-container hover:bg-primary-container/10 font-label-sm text-label-sm uppercase tracking-widest px-8 py-4 flex items-center justify-center gap-2 transition-all duration-300" type="submit">
+                            KIRISH <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="w-full border-t border-surface-stroke dark:border-surface-stroke bg-background dark:bg-background z-10 relative">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-gutter py-6 max-w-full mx-auto gap-4">
+<div class="font-label-sm text-label-sm text-ghost-text uppercase tracking-tighter">
+                © 2026 Abbosxon Boboxodjayev
+            </div>
+<div class="flex gap-6">
+<span class="font-label-sm text-label-sm text-ghost-text dark:text-ghost-text uppercase tracking-tighter">BUILT WITH DJANGO - THREE.JS</span>
+</div>
+</div>
+</footer>
+</body></html>
