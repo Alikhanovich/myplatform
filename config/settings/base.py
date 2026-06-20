@@ -29,6 +29,32 @@ DEBUG = False
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 # --------------------------------------------------------------------------
+# Vercel deployment hostlari
+# --------------------------------------------------------------------------
+# `.vercel.app` — barcha *.vercel.app (preview + production) subdomenlarni qamraydi.
+# VERCEL_URL — Vercel har deployga avtomatik beradigan joriy URL (env orqali).
+# CUSTOM_HOSTS — ulangan maxsus domen(lar).
+# Bu ro'yxat dev.py / prod.py'da ALLOWED_HOSTS'ga qo'shiladi (ular uni qayta yozadi).
+VERCEL_ALLOWED_HOSTS = [".vercel.app"]
+_vercel_url = config("VERCEL_URL", default="")
+if _vercel_url:
+    VERCEL_ALLOWED_HOSTS.append(_vercel_url)
+VERCEL_ALLOWED_HOSTS += config(
+    "CUSTOM_HOSTS",
+    default="alikhanovich.com,www.alikhanovich.com",
+    cast=Csv(),
+)
+
+ALLOWED_HOSTS += VERCEL_ALLOWED_HOSTS
+
+# Form/admin POST'lari HTTPS domenlardan ishlashi uchun (Django 4+ majburiy qiladi).
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="https://*.vercel.app,https://alikhanovich.com,https://www.alikhanovich.com",
+    cast=Csv(),
+)
+
+# --------------------------------------------------------------------------
 # Ilovalar
 # --------------------------------------------------------------------------
 DJANGO_APPS = [

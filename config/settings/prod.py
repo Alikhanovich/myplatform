@@ -17,7 +17,7 @@ DEBUG = False
 
 # Prod'da bularni MAJBURAN env'dan olamiz (default yo'q -> noto'g'ri deploy darrov bilinadi).
 SECRET_KEY = config("SECRET_KEY")
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv()) + VERCEL_ALLOWED_HOSTS  # noqa: F405
 
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 

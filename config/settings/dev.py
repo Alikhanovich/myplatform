@@ -14,7 +14,7 @@ ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
     default="localhost,127.0.0.1,0.0.0.0,testserver",
     cast=Csv(),
-)
+) + VERCEL_ALLOWED_HOSTS  # noqa: F405 (base'dan keladi)
 
 # Dev'da email haqiqatan yuborilmaydi — terminalga bosiladi.
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
