@@ -42,6 +42,15 @@ _db_url = (
     or config("STORAGE_POSTGRES_URL", default="")
     or config("STORAGE_URL", default="")
 )
+# Catch-all: agar nom kutilmagan prefix bilan bo'lsa, env ichidagi har qanday
+# postgres ulanish manzilini topamiz (Vercel integratsiyasi nomi har xil bo'lishi mumkin).
+if not _db_url:
+    import os as _os
+
+    for _v in _os.environ.values():
+        if isinstance(_v, str) and _v.startswith(("postgres://", "postgresql://")):
+            _db_url = _v
+            break
 DATABASES = {
     "default": dj_database_url.parse(
         _db_url,
