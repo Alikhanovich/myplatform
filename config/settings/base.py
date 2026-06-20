@@ -41,7 +41,7 @@ if _vercel_url:
     VERCEL_ALLOWED_HOSTS.append(_vercel_url)
 VERCEL_ALLOWED_HOSTS += config(
     "CUSTOM_HOSTS",
-    default="alikhanovich.com,www.alikhanovich.com",
+    default="tiiutest.uz,www.tiiutest.uz",
     cast=Csv(),
 )
 
@@ -50,7 +50,7 @@ ALLOWED_HOSTS += VERCEL_ALLOWED_HOSTS
 # Form/admin POST'lari HTTPS domenlardan ishlashi uchun (Django 4+ majburiy qiladi).
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
-    default="https://*.vercel.app,https://alikhanovich.com,https://www.alikhanovich.com",
+    default="https://*.vercel.app,https://tiiutest.uz,https://www.tiiutest.uz",
     cast=Csv(),
 )
 
