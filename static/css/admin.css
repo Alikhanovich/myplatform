@@ -1,0 +1,269 @@
+/* =====================================================================
+   Portfolio Studio — Django admin "Graphite & Signal" temasi.
+   Saytning public dizayni (main.css) bilan bir DNA: grafit fon, amber
+   signal, monospace yorliqlar, kvadrat (texnik) elementlar.
+
+   Django admin'ning o'z CSS o'zgaruvchilarini qayta yozamiz — shu sabab
+   butun panel (ro'yxat, forma, login, nav sidebar) avtomatik moslashadi.
+   ===================================================================== */
+
+/* :root + ikkala data-theme — light/dark toggle holatidan qat'i nazar
+   bizning tema majburiy qo'llanadi. */
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  /* Brend palitra */
+  --bg:            #16181D;
+  --panel:         #1E2127;
+  --line:          #2C313A;
+  --fg:            #E7E9EC;
+  --muted:         #8A92A0;
+  --signal:        #E0A458;
+  --signal-bright: #EFC07F;
+
+  /* --- Django admin o'zgaruvchilari --- */
+  --primary:   var(--signal);
+  --secondary: var(--panel);
+  --accent:    var(--signal);
+
+  --body-bg:           var(--bg);
+  --body-fg:           var(--fg);
+  --body-quiet-color:  var(--muted);
+  --body-medium-color: #B6BCC6;
+  --body-loud-color:   #ffffff;
+
+  --header-color:           var(--fg);
+  --header-bg:              var(--panel);
+  --header-branding-color:  var(--signal);
+  --header-link-color:      var(--fg);
+
+  --breadcrumbs-fg:       var(--muted);
+  --breadcrumbs-link-fg:  var(--fg);
+  --breadcrumbs-bg:       #1A1D23;
+
+  --link-fg:           var(--signal);
+  --link-hover-color:  var(--signal-bright);
+  --link-selected-fg:  var(--signal-bright);
+
+  --hairline-color: var(--line);
+  --border-color:   var(--line);
+
+  --error-fg:           #E6736A;
+  --message-success-bg: #1B2A1F;
+  --message-warning-bg: #2C2717;
+  --message-error-bg:   #2C1B1B;
+
+  --darkened-bg:  #1A1D23;
+  --selected-bg:  #20242B;
+  --selected-row: rgba(224, 164, 88, 0.12);
+
+  --button-fg:               #16181D;
+  --button-bg:               var(--signal);
+  --button-hover-bg:         var(--signal-bright);
+  --default-button-bg:       #C98B3F;
+  --default-button-hover-bg: var(--signal);
+  --close-button-bg:         #2C313A;
+  --close-button-hover-bg:   #3A414D;
+  --delete-button-bg:        #B5413B;
+  --delete-button-hover-bg:  #C8504A;
+
+  --object-tools-fg:        var(--fg);
+  --object-tools-bg:        #2C313A;
+  --object-tools-hover-bg:  var(--signal);
+
+  --font-family-primary:   'Inter Tight', system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-monospace: 'JetBrains Mono', ui-monospace, "Cascadia Code", monospace;
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- */
+/* Header / branding                                                 */
+/* ---------------------------------------------------------------- */
+#header {
+  border-bottom: 1px solid var(--signal);
+  box-shadow: none;
+  padding: 14px clamp(16px, 4vw, 40px);
+}
+#branding h1, #site-name { margin: 0; }
+#site-name a {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-family-monospace);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  font-weight: 500; font-size: 15px; color: var(--fg); text-decoration: none;
+}
+#site-name a:hover { color: var(--signal); }
+.brand-mark { width: 11px; height: 11px; background: var(--signal); display: inline-block; }
+
+/* Foydalanuvchi vositalari (o'ng yuqori) */
+#user-tools { font-family: var(--font-family-monospace); font-size: 11px; letter-spacing: 0.05em; }
+
+/* Tema toggle tugmasini yashiramiz — tema majburiy. */
+button.theme-toggle { display: none !important; }
+
+/* ---------------------------------------------------------------- */
+/* Tipografika                                                       */
+/* ---------------------------------------------------------------- */
+body { font-family: var(--font-family-primary); }
+h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
+
+/* Modul sarlavhalari — monospace "readout" */
+.module caption, .module > h2, .module h3,
+.dashboard .module table caption {
+  font-family: var(--font-family-monospace);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  font-size: 12px; font-weight: 500;
+  background: var(--darkened-bg); color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+  font-family: var(--font-family-monospace); font-size: 12px; letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------------------------------------------------------------- */
+/* Panellar / modullar                                              */
+/* ---------------------------------------------------------------- */
+.module {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Inputlar va tugmalar — kvadrat, texnik                           */
+/* ---------------------------------------------------------------- */
+input, textarea, select, .button, a.button,
+input[type=submit], input[type=button] { border-radius: 0 !important; }
+
+input[type=text], input[type=password], input[type=email],
+input[type=url], input[type=number], input[type=tel],
+input[type=search], textarea, select {
+  background: var(--darkened-bg); color: var(--fg);
+  border: 1px solid var(--line); padding: 8px 10px;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none; border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+
+/* Yorliqlar — monospace, kichik, uppercase */
+.form-row label, fieldset .form-row > div > label, form label {
+  font-family: var(--font-family-monospace);
+  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted);
+}
+/* Yordam matni odatdagi (uppercase emas) */
+.help, .helptext, p.help, div.help {
+  color: var(--muted); font-family: var(--font-family-primary);
+  text-transform: none; letter-spacing: 0; font-size: 12px;
+}
+
+/* Tugmalar */
+.button, a.button, input[type=submit], input[type=button],
+.submit-row input, .submit-row a {
+  font-family: var(--font-family-monospace);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  font-size: 12px; font-weight: 500;
+}
+.submit-row input.default { font-weight: 700; }
+
+/* Object tools (Add / History) */
+.object-tools a {
+  font-family: var(--font-family-monospace); text-transform: uppercase;
+  letter-spacing: 0.06em; border-radius: 0; border: 1px solid var(--line);
+}
+.object-tools a:hover { color: #16181D; border-color: var(--signal); }
+
+/* Checkbox / radio aksenti */
+input[type=checkbox], input[type=radio] { accent-color: var(--signal); }
+
+/* ---------------------------------------------------------------- */
+/* Jadvallar (changelist)                                           */
+/* ---------------------------------------------------------------- */
+#changelist table thead th, .results thead th {
+  background: var(--darkened-bg); border-bottom: 1px solid var(--line);
+}
+#changelist table thead th a, .results thead th a {
+  font-family: var(--font-family-monospace); text-transform: uppercase;
+  font-size: 11px; letter-spacing: 0.06em; color: var(--muted);
+}
+#changelist tbody tr:hover > td, #changelist tbody tr:hover > th {
+  background: var(--selected-bg);
+}
+#changelist .row1, #changelist .row2 { background: var(--panel); }
+tr.selected { background: var(--selected-row) !important; }
+
+/* Changelist filtr paneli (o'ng) */
+#changelist-filter {
+  background: var(--panel); border-left: 1px solid var(--line);
+}
+#changelist-filter h2, #changelist-filter h3 {
+  font-family: var(--font-family-monospace); text-transform: uppercase;
+  letter-spacing: 0.08em; font-size: 11px; color: var(--muted);
+}
+
+/* date_hierarchy navigatsiyasi */
+.xfull, ul.toplinks { border-color: var(--line); }
+
+/* ---------------------------------------------------------------- */
+/* Nav sidebar (chap modul ro'yxati)                                */
+/* ---------------------------------------------------------------- */
+#nav-sidebar { background: var(--panel); border-right: 1px solid var(--line); }
+.toggle-nav-sidebar { background: var(--panel); border-right: 1px solid var(--line); color: var(--muted); }
+#nav-sidebar .current-model { background: var(--selected-row); }
+#nav-sidebar a { color: var(--fg); }
+#nav-filter {
+  background: var(--darkened-bg); border: 1px solid var(--line); color: var(--fg);
+}
+#nav-filter:focus { border-color: var(--signal); }
+
+/* ---------------------------------------------------------------- */
+/* Xabarlar (messagelist)                                           */
+/* ---------------------------------------------------------------- */
+ul.messagelist li {
+  border-radius: 0; border: 1px solid var(--line);
+  font-family: var(--font-family-monospace); font-size: 13px;
+  background: var(--panel); color: var(--fg);
+}
+ul.messagelist li.success { border-color: var(--signal); }
+ul.messagelist li.warning { border-color: var(--signal-bright); }
+ul.messagelist li.error { border-color: var(--error-fg); }
+
+/* ---------------------------------------------------------------- */
+/* Inline'lar (TabularInline)                                       */
+/* ---------------------------------------------------------------- */
+.inline-group .tabular tr.add-row td { background: var(--darkened-bg); }
+.inline-related h3 {
+  background: var(--darkened-bg); border-bottom: 1px solid var(--line);
+  font-family: var(--font-family-monospace); text-transform: uppercase;
+  font-size: 11px; letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Login sahifasi                                                   */
+/* ---------------------------------------------------------------- */
+body.login { background: var(--bg); }
+body.login #container {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 0;
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
+}
+body.login #header { border-bottom: 1px solid var(--signal); border-radius: 0; }
+body.login #content { padding: 28px; }
+body.login .submit-row { padding: 0; }
+body.login .submit-row input { width: 100%; padding: 12px; }
+
+/* ---------------------------------------------------------------- */
+/* Umumiy                                                           */
+/* ---------------------------------------------------------------- */
+a:link, a:visited { color: var(--link-fg); }
+a:hover { color: var(--link-hover-color); }
+::selection { background: var(--signal); color: var(--bg); }
+
+/* Selektsiya hisoblagichi / paginator */
+.paginator { border-top: 1px solid var(--line); font-family: var(--font-family-monospace); font-size: 12px; }
+.paginator a:link, .paginator a:visited { border-radius: 0; border: 1px solid var(--line); background: var(--panel); }
+.paginator a:hover { border-color: var(--signal); }
+.paginator .this-page { background: var(--signal); color: var(--bg); padding: 2px 8px; }

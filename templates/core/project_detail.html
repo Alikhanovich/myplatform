@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ project.title }} — {% if site_profile %}{{ site_profile.full_name }}{% else %}Portfolio{% endif %}{% endblock %}
+{% block meta_description %}{{ project.summary }}{% endblock %}
+
+{% block content %}
+  <article class="section" id="work" data-hud-label="04 · LOYIHA" style="padding-top:clamp(40px,9vh,96px);">
+    <div class="section-head" data-reveal style="margin-bottom:18px;">
+      <a class="detail-back" href="{% url 'core:project_list' %}">← orqaga</a>
+      <span class="section-note">[ 04 / loyiha ]</span>
+    </div>
+
+    <h1 class="detail-title" data-reveal>{{ project.title }}</h1>
+    <p class="detail-summary" data-reveal>{{ project.summary }}</p>
+
+    <div class="tech-list" data-reveal style="margin-bottom:8px;">
+      {% for tech in project.technologies.all %}<span>{{ tech.name }}</span>{% endfor %}
+    </div>
+
+    <div class="detail-cover{% if not project.cover_image %} placeholder proj-cover{% endif %}" data-reveal>
+      {% if project.cover_image %}
+        <img src="{{ project.cover_image.url }}" alt="{{ project.title }}">
+      {% else %}
+        <div style="height:280px;display:flex;align-items:flex-end;padding:14px;">
+          <span class="cover-tag" style="position:static;">[ cover ]</span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="detail-body" data-reveal>{{ project.description|linebreaks }}</div>
+
+    <div class="detail-actions" data-reveal>
+      {% if project.demo_url %}<a class="btn btn-primary" href="{{ project.demo_url }}" target="_blank" rel="noopener">Demo ↗</a>{% endif %}
+      {% if project.repo_url %}<a class="btn" href="{{ project.repo_url }}" target="_blank" rel="noopener">Repozitoriy ↗</a>{% endif %}
+    </div>
+
+    {% if project.related_post %}
+      <a class="detail-next" data-reveal href="{{ project.related_post.get_absolute_url }}">// bog'liq maqola: {{ project.related_post.title }} →</a>
+    {% endif %}
+
+    {% if next_project %}
+      <div data-reveal style="border-top:1px solid var(--line); margin-top:32px; padding-top:22px;">
+        <a class="detail-next" href="{{ next_project.get_absolute_url }}" style="margin:0;">keyingi loyiha → {{ next_project.title }}</a>
+      </div>
+    {% endif %}
+  </article>
+{% endblock %}

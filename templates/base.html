@@ -1,0 +1,64 @@
+{% load static %}<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if site_profile %}{{ site_profile.full_name }} — {{ site_profile.role }}{% else %}Portfolio{% endif %}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% if site_profile %}{{ site_profile.tagline }}{% else %}Shaxsiy portfolio.{% endif %}{% endblock %}">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2316181D'/><rect x='3' y='3' width='10' height='10' fill='none' stroke='%23E0A458'/></svg>">
+
+  <!-- Fonts (03-UIUX: Space Grotesk + Inter Tight + JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+  <!-- Motion / 3D — CDN (01-Arxitektura: build'siz). defer => tartibda, DOM'dan keyin. -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Fon qatlamlari (hero3d.js #bg-canvas ga chizadi) -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scanline" data-scan aria-hidden="true"></div>
+
+  {% block boot %}{% endblock %}
+
+  <!-- Pastki HUD (o'lchov chizig'i) -->
+  <div class="hud" aria-hidden="true">
+    <span><span class="dot" data-blink>●</span> LIVE · PORTFOLIO.SYS</span>
+    <span data-hud-xy style="opacity:.8">X:0.00 · Y:0.00</span>
+    <span><span class="sec" data-hud-sec>01 · INTRO</span> · <span class="pct" data-hud-scroll>000%</span></span>
+  </div>
+  <div class="hud-progress-track" aria-hidden="true"><div class="hud-progress" data-progress></div></div>
+
+  <div class="wrap">
+    {% include "partials/_nav.html" %}
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% include "partials/_footer.html" %}
+  </div>
+
+  <!-- Vanilla JS (React'siz). defer => CDN'lardan keyin tartibda ishlaydi. -->
+  <script defer src="{% static 'js/hero3d.js' %}"></script>
+  <script defer src="{% static 'js/motion.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

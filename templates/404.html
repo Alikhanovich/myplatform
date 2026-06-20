@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}404 — sahifa topilmadi{% endblock %}
+
+{% block content %}
+  <section class="section" style="padding-top:clamp(60px,14vh,160px); min-height:60vh;">
+    <div class="section-head">
+      <span class="section-index">404</span>
+      <h2 class="section-title">SAHIFA TOPILMADI</h2>
+      <span class="section-note">// error</span>
+    </div>
+    <p class="section-lead">// so'ralgan manzil mavjud emas yoki ko'chirilgan.</p>
+    <a class="btn btn-primary" href="{% url 'core:home' %}">← bosh sahifa</a>
+  </section>
+{% endblock %}

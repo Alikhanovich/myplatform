@@ -1,0 +1,1355 @@
+{% load static %}<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Portfolio Admin Panel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2316181D'/><rect x='3' y='3' width='10' height='10' fill='none' stroke='%23E0A458'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; -webkit-font-smoothing:antialiased; background:#16181D; color:#E7E9EC; }
+    ::selection{ background:#E0A458; color:#16181D; }
+    input,textarea,select,button{ font-family:inherit; }
+    input:focus,textarea:focus,select:focus{ outline:none; border-color:#E0A458 !important; }
+    ::placeholder{ color:#5b626d; }
+    ::-webkit-scrollbar{ width:8px; }
+    ::-webkit-scrollbar-thumb{ background:#2C313A; border-radius:0; }
+
+    .grid-bg{ position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.4;
+      background-image:linear-gradient(#2C313A 1px,transparent 1px),linear-gradient(90deg,#2C313A 1px,transparent 1px);
+      background-size:56px 56px; }
+
+    .layout{ position:relative; z-index:1; display:grid; grid-template-columns:248px 1fr; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar{ border-right:1px solid #2C313A; background:#121419; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar-brand{ display:flex; align-items:center; gap:11px; padding:22px 22px 20px; border-bottom:1px solid #2C313A; flex-shrink:0; }
+    .brand-dot{ width:10px; height:10px; background:#E0A458; display:inline-block; flex-shrink:0; }
+    .brand-name{ font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:0.14em; color:#E7E9EC; }
+    .brand-sub{ font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.18em; color:#8A92A0; margin-top:3px; }
+    .nav-section{ font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.18em; color:#5b626d; padding:18px 22px 8px; }
+    .nav-items{ display:flex; flex-direction:column; padding:0 12px; }
+    .nav-item{ position:relative; display:flex; align-items:center; gap:12px; padding:11px 12px; margin:1px 0;
+      background:transparent; border:none; cursor:pointer; font-family:'Inter Tight',sans-serif; font-size:14px;
+      color:#8A92A0; transition:all .18s; width:100%; text-align:left; }
+    .nav-item:hover{ background:#1A1D23; color:#E7E9EC; }
+    .nav-item.active{ background:#1A1D23; color:#E7E9EC; }
+    .nav-item .bar{ position:absolute; left:0; top:6px; bottom:6px; width:2px; background:transparent; }
+    .nav-item.active .bar{ background:#E0A458; }
+    .nav-item .icon{ font-family:'JetBrains Mono',monospace; font-size:13px; width:18px; text-align:center; color:#8A92A0; }
+    .nav-item.active .icon{ color:#E0A458; }
+    .nav-item .lbl{ flex:1; text-align:left; }
+    .nav-item .cnt{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#5b626d; }
+    .sidebar-user{ margin-top:auto; padding:16px 22px; border-top:1px solid #2C313A; display:flex; align-items:center; gap:11px; flex-shrink:0; }
+    .user-avatar{ width:32px; height:32px; border:1px solid #2C313A; display:flex; align-items:center; justify-content:center;
+      font-family:'Space Grotesk',sans-serif; font-weight:600; color:#E0A458; font-size:13px; flex-shrink:0; }
+    .user-name{ font-family:'Inter Tight',sans-serif; font-size:13px; color:#E7E9EC; }
+    .user-role{ font-family:'JetBrains Mono',monospace; font-size:10px; color:#8A92A0; }
+    .user-logout{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A92A0; cursor:pointer; text-decoration:none; margin-left:auto; background:transparent; border:none; padding:0; }
+    .user-logout:hover{ color:#E0A458; }
+    .user-logout-form{ margin:0; padding:0; margin-left:auto; display:flex; align-items:center; }
+
+    /* MAIN */
+    .main{ display:flex; flex-direction:column; min-width:0; }
+    .topbar{ position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:16px; padding:16px 28px;
+      border-bottom:1px solid #2C313A; background:rgba(22,24,29,0.92); backdrop-filter:blur(10px); }
+    .breadcrumb{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.08em; color:#8A92A0; }
+    .breadcrumb span{ color:#E7E9EC; }
+    .topbar-right{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+    .search-box{ display:flex; align-items:center; gap:8px; border:1px solid #2C313A; padding:7px 12px; background:#1A1D23; }
+    .search-icon{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#5b626d; }
+    .search-input{ background:transparent; border:none; color:#E7E9EC; font-size:13px; width:140px; }
+    .search-input:focus{ outline:none; }
+    .btn-view-site{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.06em; color:#E0A458;
+      text-decoration:none; border:1px solid #2C313A; padding:8px 13px; transition:border-color .2s; }
+    .btn-view-site:hover{ border-color:#E0A458; }
+
+    /* CONTENT */
+    .content{ padding:28px; flex:1; }
+
+    /* Screens */
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    /* Section header */
+    .sec-header{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:26px; }
+    .sec-title{ font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:600; letter-spacing:-0.02em; margin:0; color:#E7E9EC; }
+    .sec-sub{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A92A0; margin:8px 0 0; }
+
+    /* Buttons */
+    .btn-primary{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; color:#16181D;
+      background:#E0A458; border:none; padding:11px 18px; cursor:pointer; transition:opacity .2s; }
+    .btn-primary:hover{ opacity:0.85; }
+    .btn-secondary{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; color:#8A92A0;
+      background:transparent; border:1px solid #2C313A; padding:11px 18px; cursor:pointer; transition:all .2s; }
+    .btn-secondary:hover{ border-color:#E0A458; color:#E0A458; }
+    .btn-danger{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.06em; color:#ff6b6b;
+      background:transparent; border:1px solid #ff6b6b33; padding:8px 14px; cursor:pointer; transition:all .2s; }
+    .btn-danger:hover{ background:#ff6b6b22; border-color:#ff6b6b; }
+    .btn-back{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#8A92A0; background:transparent;
+      border:none; cursor:pointer; padding:0; margin-bottom:16px; }
+    .btn-back:hover{ color:#E0A458; }
+    .btn-icon{ background:transparent; border:1px solid #2C313A; color:#8A92A0; width:30px; height:30px; cursor:pointer; transition:all .2s; font-size:14px; }
+    .btn-icon:hover{ border-color:#E0A458; color:#E0A458; }
+
+    /* Stat cards */
+    .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; margin-bottom:24px; }
+    .stat-card{ position:relative; border:1px solid #2C313A; background:#1E2127; padding:20px; }
+    .stat-card::before{ content:''; position:absolute; top:-1px; left:-1px; width:12px; height:12px; border-top:1px solid #E0A458; border-left:1px solid #E0A458; }
+    .stat-label{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; color:#8A92A0; text-transform:uppercase; }
+    .stat-value{ font-family:'Space Grotesk',sans-serif; font-size:38px; font-weight:600; color:#E7E9EC; margin-top:10px; line-height:1; }
+    .stat-delta{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#E0A458; margin-top:8px; }
+
+    /* Dashboard grid */
+    .dash-grid{ display:grid; grid-template-columns:1.6fr 1fr; gap:16px; }
+    .panel{ border:1px solid #2C313A; background:#1E2127; }
+    .panel-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #2C313A; }
+    .panel-title{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#E7E9EC; text-transform:uppercase; }
+    .panel-note{ font-family:'JetBrains Mono',monospace; font-size:10px; color:#8A92A0; }
+    .panel-body{ padding:16px 20px; }
+
+    /* Activity */
+    .activity-row{ display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; padding:13px 20px; border-bottom:1px solid #23272f; }
+    .act-tag{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; color:#16181D; padding:3px 7px; text-transform:uppercase; }
+    .act-what{ font-family:'Inter Tight',sans-serif; font-size:14px; color:#E7E9EC; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .act-when{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#8A92A0; white-space:nowrap; }
+
+    /* Quick actions */
+    .quick-btn{ display:flex; align-items:center; gap:12px; font-family:'Inter Tight',sans-serif; font-size:14px; color:#E7E9EC;
+      background:#16181D; border:1px solid #2C313A; padding:13px 14px; cursor:pointer; text-align:left; transition:border-color .2s; width:100%; }
+    .quick-btn:hover{ border-color:#E0A458; }
+    .quick-icon{ color:#E0A458; font-family:'JetBrains Mono',monospace; }
+    .sys-info{ margin-top:6px; padding-top:14px; border-top:1px solid #23272f; font-family:'JetBrains Mono',monospace; font-size:11px; color:#8A92A0; line-height:1.7; }
+
+    /* Table */
+    .tbl-wrap{ border:1px solid #2C313A; background:#1E2127; overflow:hidden; }
+    .tbl-head{ display:grid; gap:12px; align-items:center; padding:13px 18px; border-bottom:1px solid #2C313A;
+      font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; color:#8A92A0; text-transform:uppercase; }
+    .tbl-row{ display:grid; gap:12px; align-items:center; padding:14px 18px; border-bottom:1px solid #23272f; transition:background .15s; }
+    .tbl-row:hover{ background:#1A1D23; }
+    .tbl-row:last-child{ border-bottom:none; }
+    .tbl-footer{ display:flex; align-items:center; justify-content:space-between; padding:13px 18px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#8A92A0; border-top:1px solid #2C313A; }
+    .project-cols{ grid-template-columns:40px 1fr 150px 92px 92px 70px 96px 44px; }
+    .blog-cols{ grid-template-columns:1fr 130px 120px 100px 44px; }
+    .row-num{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#5b626d; }
+    .row-title{ font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; color:#E7E9EC; }
+    .row-slug{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#5b626d; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .row-tech{ font-family:'JetBrains Mono',monospace; font-size:10px; color:#8A92A0; }
+    .row-date{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#8A92A0; }
+    .order-input{ width:54px; background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'JetBrains Mono',monospace; font-size:12px; padding:6px 8px; text-align:center; }
+    .pill-btn{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; padding:6px 0; width:100%; cursor:pointer; text-transform:uppercase; transition:all .18s; border:1px solid; }
+    .pill-on{ color:#16181D; background:#5BA6A0; border-color:#5BA6A0; }
+    .pill-off{ color:#5b626d; background:transparent; border-color:#2C313A; }
+    .badge-featured{ font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.14em; color:#E0A458;
+      border:1px solid #E0A458; padding:3px 7px; text-transform:uppercase; }
+
+    /* Forms */
+    .form-panel{ border:1px solid #2C313A; background:#1E2127; }
+    .form-row{ padding:22px; border-bottom:1px solid #2C313A; }
+    .form-row-grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0; }
+    .form-row-left{ border-right:1px solid #2C313A; }
+    .form-label{ display:block; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em;
+      color:#8A92A0; text-transform:uppercase; margin-bottom:9px; }
+    .form-input{ width:100%; background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'Inter Tight',sans-serif;
+      font-size:14px; padding:11px 13px; transition:border-color .2s; }
+    .form-input:focus{ outline:none; border-color:#E0A458; }
+    .form-input.mono{ font-family:'JetBrains Mono',monospace; font-size:13px; }
+    .form-textarea{ width:100%; background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'Inter Tight',sans-serif;
+      font-size:14px; line-height:1.6; padding:11px 13px; resize:vertical; }
+    .form-textarea:focus{ outline:none; border-color:#E0A458; }
+    .form-hint{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#5b626d; margin-top:9px; }
+    .form-hint .accent{ color:#E0A458; }
+    .form-actions{ display:flex; align-items:center; gap:12px; margin-top:18px; flex-wrap:wrap; }
+    .save-msg{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#5BA6A0; opacity:0; transition:opacity .3s; }
+    .save-msg.show{ opacity:1; }
+    .err-msg{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#ff6b6b; opacity:0; transition:opacity .3s; }
+    .err-msg.show{ opacity:1; }
+
+    /* Checkbox */
+    .check-row{ display:flex; align-items:center; gap:11px; cursor:pointer; background:transparent; border:none; padding:0; }
+    .check-box{ width:20px; height:20px; border:1px solid #2C313A; display:flex; align-items:center; justify-content:center;
+      font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:#16181D; transition:all .18s; flex-shrink:0; }
+    .check-box.checked{ background:#E0A458; border-color:#E0A458; }
+    .check-label{ font-family:'Inter Tight',sans-serif; font-size:14px; color:#E7E9EC; }
+
+    /* Image drop area */
+    .img-drop{ border:1px dashed #2C313A; background:#16181D; padding:24px; text-align:center; cursor:pointer; transition:border-color .2s; position:relative; }
+    .img-drop:hover{ border-color:#E0A458; }
+    .img-drop-label{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#8A92A0; }
+    .img-drop-hint{ font-family:'JetBrains Mono',monospace; font-size:10px; color:#5b626d; margin-top:7px; }
+    .img-preview{ max-width:100%; max-height:120px; display:none; margin:0 auto; }
+    .img-drop-input{ position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .img-filename{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#E0A458; margin-top:7px; display:none; }
+
+    /* Tags */
+    .tag-list{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px; }
+    .tag-item{ font-family:'JetBrains Mono',monospace; font-size:12px; color:#E7E9EC; border:1px solid #2C313A;
+      padding:5px 9px; display:inline-flex; align-items:center; gap:6px; }
+    .tag-remove{ cursor:pointer; color:#8A92A0; font-size:10px; transition:color .15s; }
+    .tag-remove:hover{ color:#ff6b6b; }
+    .tag-add-row{ display:flex; gap:8px; }
+    .tag-input{ flex:1; background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'JetBrains Mono',monospace; font-size:12px; padding:6px 10px; }
+    .tag-add-btn{ font-family:'JetBrains Mono',monospace; font-size:11px; color:#E0A458; border:1px dashed #2C313A; padding:6px 10px; cursor:pointer; background:transparent; }
+    .tag-add-btn:hover{ border-color:#E0A458; }
+
+    /* Profile screen: skill bars */
+    .skill-cat-item{ border:1px solid #2C313A; background:#161a21; margin-bottom:12px; }
+    .skill-cat-header{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #2C313A; }
+    .skill-cat-name{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; color:#E0A458; text-transform:uppercase; }
+    .skill-rows{ padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+    .skill-item{ display:grid; grid-template-columns:1fr 80px 80px 30px; gap:8px; align-items:center; }
+    .skill-name-input{ background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'Inter Tight',sans-serif; font-size:13px; padding:6px 9px; width:100%; }
+    .skill-level-input{ background:#16181D; border:1px solid #2C313A; color:#E7E9EC; font-family:'JetBrains Mono',monospace; font-size:12px; padding:6px 8px; text-align:center; width:100%; }
+    .skill-bar-wrap{ height:4px; background:#2C313A; border-radius:0; }
+    .skill-bar-fill{ height:100%; background:#E0A458; transition:width .3s; }
+
+    /* Experience item */
+    .xp-item{ border:1px solid #2C313A; background:#161a21; margin-bottom:12px; padding:18px 20px; display:grid; grid-template-columns:1fr 1fr; gap:12px; position:relative; }
+    .xp-full{ grid-column:1/-1; }
+
+    /* Modal */
+    .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.open{ display:flex; }
+    .modal{ background:#1E2127; border:1px solid #2C313A; width:100%; max-width:600px; max-height:90vh; overflow-y:auto; }
+    .modal-header{ display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #2C313A; }
+    .modal-title{ font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600; color:#E7E9EC; margin:0; }
+    .modal-close{ background:transparent; border:none; color:#8A92A0; cursor:pointer; font-size:18px; }
+    .modal-close:hover{ color:#E0A458; }
+    .modal-body{ padding:24px; }
+
+    /* Notification toast */
+    .toast{ position:fixed; bottom:60px; right:20px; z-index:200; font-family:'JetBrains Mono',monospace; font-size:12px;
+      padding:12px 20px; border:1px solid; transform:translateY(20px); opacity:0; transition:all .3s; pointer-events:none; }
+    .toast.show{ transform:translateY(0); opacity:1; }
+    .toast.success{ background:#0d1f1e; border-color:#5BA6A0; color:#5BA6A0; }
+    .toast.error{ background:#1f0d0d; border-color:#ff6b6b; color:#ff6b6b; }
+
+    /* Responsive */
+    @media(max-width:900px){
+      .layout{ grid-template-columns:200px 1fr; }
+    }
+    @media(max-width:640px){
+      .layout{ grid-template-columns:1fr; }
+      .sidebar{ position:static; height:auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg" aria-hidden="true"></div>
+
+<div class="layout">
+  <!-- ══════════════════════════════════════ SIDEBAR ══════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-dot"></span>
+      <div>
+        <div class="brand-name">PORTFOLIO.SYS</div>
+        <div class="brand-sub">ADMIN · v2.0</div>
+      </div>
+    </div>
+
+    <div class="nav-section">// KONTENT</div>
+    <nav class="nav-items" id="sideNav">
+      <button class="nav-item active" data-screen="dashboard">
+        <span class="bar"></span><span class="icon">▣</span><span class="lbl">Boshqaruv</span><span class="cnt"></span>
+      </button>
+      <button class="nav-item" data-screen="profile">
+        <span class="bar"></span><span class="icon">◉</span><span class="lbl">Profil</span><span class="cnt">1</span>
+      </button>
+      <button class="nav-item" data-screen="stats">
+        <span class="bar"></span><span class="icon">▦</span><span class="lbl">Hero statlar</span><span class="cnt" id="statsCount">–</span>
+      </button>
+      <button class="nav-item" data-screen="skills">
+        <span class="bar"></span><span class="icon">▰</span><span class="lbl">Ko'nikmalar</span><span class="cnt" id="skillsCount">–</span>
+      </button>
+      <button class="nav-item" data-screen="experience">
+        <span class="bar"></span><span class="icon">▤</span><span class="lbl">Tajriba</span><span class="cnt" id="xpCount">–</span>
+      </button>
+      <button class="nav-item" data-screen="projects">
+        <span class="bar"></span><span class="icon">◆</span><span class="lbl">Loyihalar</span><span class="cnt" id="projCount">–</span>
+      </button>
+      <button class="nav-item" data-screen="blog">
+        <span class="bar"></span><span class="icon">▱</span><span class="lbl">Blog</span><span class="cnt" id="blogCount">–</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ request.user.first_name|first|upper|default:"A" }}{{ request.user.last_name|first|upper|default:"K" }}</div>
+      <div style="flex:1">
+        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="user-role">superuser</div>
+      </div>
+      <form method="post" action="{% url 'admin:logout' %}" style="margin-left:auto;">
+        {% csrf_token %}
+        <button type="submit" class="user-logout" title="Chiqish">⏻</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════ MAIN ══════════════════════════════════════ -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="breadcrumb">admin <span style="color:#5b626d">/</span> <span id="crumb">boshqaruv</span></div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input id="globalSearch" class="search-input" placeholder="qidiruv..." type="search">
+        </div>
+        <a href="/" class="btn-view-site" target="_blank">SAYTNI KO'RISH ↗</a>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ═══════════════════════════ DASHBOARD ═══════════════════════════ -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="sec-header">
+          <div>
+            <h1 class="sec-title">Boshqaruv paneli</h1>
+            <p class="sec-sub">// xush kelibsiz · superuser</p>
+          </div>
+          <button class="btn-primary" onclick="goScreen('project-edit')">+ YANGI LOYIHA</button>
+        </div>
+
+        <div class="stats-grid" id="dashStats"></div>
+
+        <div class="dash-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">So'nggi o'zgarishlar</div>
+              <div class="panel-note">// audit log</div>
+            </div>
+            <div id="activityLog"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Tezkor amallar</div></div>
+            <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+              <button class="quick-btn" onclick="goScreen('project-edit')"><span class="quick-icon">◆</span> Yangi loyiha qo'shish</button>
+              <button class="quick-btn" onclick="goScreen('blog-edit')"><span class="quick-icon">▱</span> Blog post yozish</button>
+              <button class="quick-btn" onclick="goScreen('profile')"><span class="quick-icon">◉</span> Profilni tahrirlash</button>
+              <div class="sys-info">
+                <div>sys.status <span style="color:#5BA6A0">● online</span></div>
+                <div>db <span style="color:#E7E9EC">sqlite → postgres</span></div>
+                <div>admin <span style="color:#E7E9EC">{{ request.user.username }}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ PROFIL ═══════════════════════════ -->
+      <div class="screen" id="screen-profile">
+        <div class="sec-header">
+          <div><h1 class="sec-title">Profil</h1><p class="sec-sub" id="profileSub">// yuklanmoqda...</p></div>
+        </div>
+        <div class="form-panel" style="max-width:780px;">
+          <div class="form-row">
+            <label class="form-label">To'liq ism *</label>
+            <input id="pf_fullname" class="form-input" placeholder="Abror Karimov">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Lavozim</label>
+            <input id="pf_role" class="form-input" placeholder="Backend dasturchi">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Shior (hero tagline)</label>
+            <input id="pf_tagline" class="form-input" placeholder="Tizimlar quraman...">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Bio / About</label>
+            <textarea id="pf_bio" class="form-textarea" rows="4" placeholder="Men murakkab jarayonlarni..."></textarea>
+          </div>
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label class="form-label">Email</label>
+              <input id="pf_email" class="form-input" type="email" placeholder="you@example.com">
+            </div>
+            <div>
+              <label class="form-label">Manzil</label>
+              <input id="pf_location" class="form-input" placeholder="Toshkent, UZ">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-actions">
+              <button class="btn-primary" onclick="saveProfile()">SAQLASH</button>
+              <span class="save-msg" id="profileSaved">✓ saqlandi</span>
+              <span class="err-msg" id="profileErr"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social links -->
+        <div style="margin-top:24px;max-width:780px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:#8A92A0;text-transform:uppercase;">// Ijtimoiy havolalar</div>
+            <button class="btn-secondary" onclick="addSocialLink()">+ Qo'shish</button>
+          </div>
+          <div id="socialList" class="form-panel"></div>
+          <div class="form-actions" style="margin-top:12px;">
+            <button class="btn-primary" onclick="saveSocial()">HAVOLALARNI SAQLASH</button>
+            <span class="save-msg" id="socialSaved">✓ saqlandi</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ HERO STATLAR ═══════════════════════════ -->
+      <div class="screen" id="screen-stats">
+        <div class="sec-header">
+          <div><h1 class="sec-title">Hero Ko'rsatkichlar</h1><p class="sec-sub">// Hero bo'limidagi raqamlar</p></div>
+          <button class="btn-secondary" onclick="addStat()">+ Qo'shish</button>
+        </div>
+        <div id="statsList" style="max-width:600px;"></div>
+        <div class="form-actions" style="margin-top:16px;">
+          <button class="btn-primary" onclick="saveStats()">SAQLASH</button>
+          <span class="save-msg" id="statsSaved">✓ saqlandi</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ KO'NIKMALAR ═══════════════════════════ -->
+      <div class="screen" id="screen-skills">
+        <div class="sec-header">
+          <div><h1 class="sec-title">Ko'nikmalar</h1><p class="sec-sub">// Kategoriyalar + 0–100 kalibr</p></div>
+          <button class="btn-secondary" onclick="addSkillCat()">+ Kategoriya</button>
+        </div>
+        <div id="skillsList" style="max-width:780px;"></div>
+        <div class="form-actions" style="margin-top:16px;">
+          <button class="btn-primary" onclick="saveSkills()">SAQLASH</button>
+          <span class="save-msg" id="skillsSaved">✓ saqlandi</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ TAJRIBA ═══════════════════════════ -->
+      <div class="screen" id="screen-experience">
+        <div class="sec-header">
+          <div><h1 class="sec-title">Tajriba</h1><p class="sec-sub">// Ish tajribasi timeline</p></div>
+          <button class="btn-secondary" onclick="addXP()">+ Qo'shish</button>
+        </div>
+        <div id="xpList" style="max-width:780px;"></div>
+        <div class="form-actions" style="margin-top:16px;">
+          <button class="btn-primary" onclick="saveExperience()">SAQLASH</button>
+          <span class="save-msg" id="xpSaved">✓ saqlandi</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ LOYIHALAR ═══════════════════════════ -->
+      <div class="screen" id="screen-projects">
+        <button class="btn-back" onclick="goScreen('dashboard')">← boshqaruvga</button>
+        <div class="sec-header">
+          <div>
+            <h1 class="sec-title">Loyihalar</h1>
+            <p class="sec-sub" id="projSub">// yuklanmoqda...</p>
+          </div>
+          <button class="btn-primary" onclick="goScreen('project-edit')">+ QO'SHISH</button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-head project-cols">
+            <span>#</span><span>Nomi</span><span>Texnologiya</span><span>Featured</span><span>Nashr</span><span>Tartib</span><span>Sana</span><span></span>
+          </div>
+          <div id="projectsTable"></div>
+          <div class="tbl-footer">
+            <span id="projFooter">0 ta · 1 sahifa</span>
+            <span>o'zgarishlar avtomatik saqlanadi</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ LOYIHA TAHRIRLASH ═══════════════════════════ -->
+      <div class="screen" id="screen-project-edit" style="max-width:880px;">
+        <button class="btn-back" onclick="goScreen('projects')">← loyihalar ro'yxatiga</button>
+        <div class="sec-header">
+          <div>
+            <h1 class="sec-title" id="peTitle">Yangi loyiha</h1>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8A92A0;">core · Project</span>
+          </div>
+        </div>
+        <input type="hidden" id="pe_id">
+        <div class="form-panel">
+          <div class="form-row">
+            <label class="form-label">Nomi *</label>
+            <input id="pe_title" class="form-input" style="font-size:16px;" placeholder="Loyiha nomi">
+            <div class="form-hint">slug: <span class="accent" id="pe_slug_preview">–</span> · avtomatik</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Qisqa tavsif</label>
+            <input id="pe_summary" class="form-input" placeholder="1-2 jumla...">
+          </div>
+          <div class="form-row">
+            <label class="form-label">To'liq tavsif</label>
+            <textarea id="pe_desc" class="form-textarea" rows="5" placeholder="Muammo, yechim, texnologiyalar..."></textarea>
+          </div>
+          <div class="form-row-grid2">
+            <div class="form-row form-row-left">
+              <label class="form-label">Muqova rasmi</label>
+              <div class="img-drop" id="pe_cover_drop">
+                <input type="file" class="img-drop-input" id="pe_cover_input" accept="image/jpeg,image/png,image/webp" onchange="handleCoverFile(this,'pe_cover_drop','pe_cover_name','pe_cover_preview')">
+                <img class="img-preview" id="pe_cover_preview">
+                <div class="img-drop-label">[ rasmni tashlang yoki tanlang ]</div>
+                <div class="img-drop-hint">jpg · png · webp · max 5MB</div>
+                <div class="img-filename" id="pe_cover_name"></div>
+              </div>
+              <div id="pe_cover_current" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5b626d;margin-top:6px;"></div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Texnologiyalar</label>
+              <div class="tag-list" id="pe_tech_list"></div>
+              <div class="tag-add-row">
+                <input class="tag-input" id="pe_tech_input" placeholder="masalan: Django" onkeydown="if(event.key==='Enter'){event.preventDefault();addTag('pe_tech_input','pe_tech_list')}">
+                <button class="tag-add-btn" onclick="addTag('pe_tech_input','pe_tech_list')">+ qo'shish</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-grid2">
+            <div class="form-row form-row-left">
+              <label class="form-label">Demo URL</label>
+              <input id="pe_demo" class="form-input mono" placeholder="https://...">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Repozitoriy URL</label>
+              <input id="pe_repo" class="form-input mono" placeholder="https://github.com/...">
+            </div>
+          </div>
+          <div class="form-row" style="display:flex;flex-wrap:wrap;gap:26px;">
+            <button class="check-row" onclick="toggleCheck('pe_featured')">
+              <span class="check-box" id="pe_featured_box"></span>
+              <span class="check-label">Featured (bosh sahifada)</span>
+            </button>
+            <button class="check-row" onclick="toggleCheck('pe_published')">
+              <span class="check-box" id="pe_published_box"></span>
+              <span class="check-label">Nashr qilingan</span>
+            </button>
+            <input type="hidden" id="pe_featured" value="false">
+            <input type="hidden" id="pe_published" value="true">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="saveProject()">SAQLASH</button>
+          <button class="btn-secondary" onclick="goScreen('projects')">BEKOR QILISH</button>
+          <span class="save-msg" id="peSaved">✓ saqlandi</span>
+          <span class="err-msg" id="peErr"></span>
+          <button class="btn-danger" id="pe_delete_btn" onclick="deleteProject()" style="margin-left:auto;display:none;">O'CHIRISH</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ BLOG ═══════════════════════════ -->
+      <div class="screen" id="screen-blog">
+        <button class="btn-back" onclick="goScreen('dashboard')">← boshqaruvga</button>
+        <div class="sec-header">
+          <div>
+            <h1 class="sec-title">Blog postlar</h1>
+            <p class="sec-sub" id="blogSub">// yuklanmoqda...</p>
+          </div>
+          <button class="btn-primary" onclick="goScreen('blog-edit')">+ QO'SHISH</button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-head blog-cols">
+            <span>Sarlavha</span><span>Kategoriya</span><span>Status</span><span>Sana</span><span></span>
+          </div>
+          <div id="blogTable"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ BLOG TAHRIRLASH ═══════════════════════════ -->
+      <div class="screen" id="screen-blog-edit" style="max-width:880px;">
+        <button class="btn-back" onclick="goScreen('blog')">← blog ro'yxatiga</button>
+        <div class="sec-header">
+          <h1 class="sec-title" id="beTitle">Yangi post</h1>
+        </div>
+        <input type="hidden" id="be_id">
+        <div class="form-panel">
+          <div class="form-row">
+            <label class="form-label">Sarlavha *</label>
+            <input id="be_title" class="form-input" style="font-size:16px;" placeholder="Post sarlavhasi">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Qisqa matn (excerpt)</label>
+            <input id="be_excerpt" class="form-input" placeholder="1-2 jumla...">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Matn (body)</label>
+            <textarea id="be_body" class="form-textarea" rows="10" placeholder="To'liq maqola matni..."></textarea>
+          </div>
+          <div class="form-row-grid2">
+            <div class="form-row form-row-left">
+              <label class="form-label">Kategoriya</label>
+              <select id="be_category" class="form-input" style="cursor:pointer;"></select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Status</label>
+              <select id="be_status" class="form-input" style="cursor:pointer;">
+                <option value="draft">Qoralama</option>
+                <option value="published">Nashr qilingan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Muqova rasmi</label>
+            <div class="img-drop" id="be_cover_drop">
+              <input type="file" class="img-drop-input" id="be_cover_input" accept="image/jpeg,image/png,image/webp" onchange="handleCoverFile(this,'be_cover_drop','be_cover_name','be_cover_preview')">
+              <img class="img-preview" id="be_cover_preview">
+              <div class="img-drop-label">[ rasmni tashlang yoki tanlang ]</div>
+              <div class="img-drop-hint">jpg · png · webp · max 5MB</div>
+              <div class="img-filename" id="be_cover_name"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="saveBlog()">SAQLASH</button>
+          <button class="btn-secondary" onclick="goScreen('blog')">BEKOR QILISH</button>
+          <span class="save-msg" id="beSaved">✓ saqlandi</span>
+          <span class="err-msg" id="beErr"></span>
+          <button class="btn-danger" id="be_delete_btn" onclick="deleteBlog()" style="margin-left:auto;display:none;">O'CHIRISH</button>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /layout -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// GLOBALS
+// ════════════════════════════════════════════════════════
+const API = {
+  data:    '/admin-panel/api/data/',
+  profileSave: '/admin-panel/api/profile/save/',
+  socialSave:  '/admin-panel/api/profile/social/',
+  statsSave:   '/admin-panel/api/stats/save/',
+  skillsSave:  '/admin-panel/api/skills/save/',
+  xpSave:      '/admin-panel/api/experience/save/',
+  projToggle:  '/admin-panel/api/projects/toggle/',
+  projSave:    '/admin-panel/api/projects/save/',
+  projDelete:  '/admin-panel/api/projects/delete/',
+  blogToggle:  '/admin-panel/api/blog/toggle/',
+  blogSave:    '/admin-panel/api/blog/save/',
+  blogDelete:  '/admin-panel/api/blog/delete/',
+};
+
+function csrfToken() {
+  // Meta tagdan o'qiymiz — cookie HttpOnly bo'lsa ham ishlaydi
+  return document.querySelector('meta[name="csrf-token"]')?.content
+    || document.cookie.match(/csrftoken=([^;]+)/)?.[1]
+    || '';
+}
+
+async function api(url, opts={}) {
+  const res = await fetch(url, {
+    headers: { 'X-CSRFToken': csrfToken(), 'Accept': 'application/json', ...opts.headers },
+    ...opts
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function apiJson(url, body) {
+  return api(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+}
+
+async function apiForm(url, form) {
+  return api(url, { method:'POST', body: form });
+}
+
+let DB = { profile:null, social_links:[], hero_stats:[], experiences:[], skill_categories:[], projects:[], blog:[], blog_categories:[] };
+let currentScreen = 'dashboard';
+
+// ════════════════════════════════════════════════════════
+// BOOT — load data
+// ════════════════════════════════════════════════════════
+async function loadData() {
+  try {
+    DB = await api(API.data);
+    updateCounts();
+    renderDashboard();
+  } catch(e) {
+    showToast('Ma\'lumotlarni yuklashda xato: '+e.message, 'error');
+  }
+}
+
+function updateCounts() {
+  const statsEl = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  statsEl('statsCount', DB.hero_stats.length);
+  statsEl('skillsCount', DB.skill_categories.reduce((a,c)=>a+c.skills.length,0));
+  statsEl('xpCount', DB.experiences.length);
+  statsEl('projCount', DB.projects.length);
+  statsEl('blogCount', DB.blog.length);
+}
+
+// ════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════
+const crumbMap = {
+  dashboard:'boshqaruv', profile:'profil', stats:'hero statlar',
+  skills:"ko'nikmalar", experience:'tajriba',
+  projects:'loyihalar', 'project-edit':'loyihalar / yangi',
+  blog:'blog', 'blog-edit':'blog / yangi'
+};
+
+function goScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>{
+    const s = b.dataset.screen;
+    const matches = s===name || (name==='project-edit'&&s==='projects') || (name==='blog-edit'&&s==='blog');
+    b.classList.toggle('active', matches);
+  });
+  const crumb = document.getElementById('crumb');
+  if(crumb) crumb.textContent = crumbMap[name] || name;
+  currentScreen = name;
+  window.scrollTo(0,0);
+
+  if(name==='profile') renderProfile();
+  if(name==='stats') renderStats();
+  if(name==='skills') renderSkills();
+  if(name==='experience') renderXP();
+  if(name==='projects') renderProjects();
+  if(name==='project-edit') openProjectEdit(null);
+  if(name==='blog') renderBlog();
+  if(name==='blog-edit') openBlogEdit(null);
+}
+
+document.querySelectorAll('.nav-item[data-screen]').forEach(btn=>{
+  btn.addEventListener('click', ()=>goScreen(btn.dataset.screen));
+});
+
+// ════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════
+let toastT;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✓ ':type==='error'?'✕ ':'')+msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.className='toast',2800);
+}
+function showMsg(id, show, text='') {
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(text) el.textContent = text;
+  el.classList.toggle('show', show);
+  if(show) setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════
+function renderDashboard() {
+  const grid = document.getElementById('dashStats');
+  if(!grid) return;
+  const stats = [
+    { label:'Loyihalar', value:DB.projects.length, delta:`${DB.projects.filter(p=>p.is_published).length} nashr` },
+    { label:'Blog postlar', value:DB.blog.length, delta:`${DB.blog.filter(b=>b.status==='published').length} nashr` },
+    { label:"Ko'nikmalar", value:DB.skill_categories.reduce((a,c)=>a+c.skills.length,0), delta:`${DB.skill_categories.length} kategoriya` },
+    { label:'Tajriba', value:DB.experiences.length, delta:'yozuv' },
+  ];
+  grid.innerHTML = stats.map(s=>`
+    <div class="stat-card">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-delta">${s.delta}</div>
+    </div>`).join('');
+
+  const log = document.getElementById('activityLog');
+  if(log) {
+    const acts = DB.projects.slice(-3).reverse().map(p=>({ action:'proj', what:p.title, when:p.date }))
+      .concat(DB.blog.slice(-2).reverse().map(b=>({ action:'blog', what:b.title, when:b.date })));
+    if(!acts.length) {
+      log.innerHTML='<div class="activity-row"><span class="act-what" style="color:#5b626d">// hali yozuv yo\'q</span></div>';
+    } else {
+      log.innerHTML = acts.slice(0,5).map(a=>`
+        <div class="activity-row">
+          <span class="act-tag" style="background:${a.action==='proj'?'#E0A458':'#5BA6A0'}">${a.action}</span>
+          <span class="act-what">${escHtml(a.what)}</span>
+          <span class="act-when">${a.when||'–'}</span>
+        </div>`).join('');
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// PROFIL
+// ════════════════════════════════════════════════════════
+function renderProfile() {
+  const p = DB.profile;
+  const sub = document.getElementById('profileSub');
+  if(sub) sub.textContent = p ? `// ${p.full_name}` : '// profil topilmadi';
+  if(!p) return;
+  setVal('pf_fullname', p.full_name);
+  setVal('pf_role', p.role);
+  setVal('pf_tagline', p.tagline);
+  setVal('pf_bio', p.bio);
+  setVal('pf_email', p.email);
+  setVal('pf_location', p.location);
+  renderSocial();
+}
+
+function renderSocial() {
+  const el = document.getElementById('socialList');
+  if(!el) return;
+  if(!DB.social_links.length) {
+    el.innerHTML='<div style="padding:16px 20px;font-family:\'JetBrains Mono\',monospace;font-size:12px;color:#5b626d;">// havolalar yo\'q</div>';
+    return;
+  }
+  el.innerHTML = DB.social_links.map((l,i)=>`
+    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;">
+      <div>
+        ${i===0?'<label class="form-label">Platforma</label>':''}
+        <input class="form-input" data-si="${i}" data-key="platform" value="${escHtml(l.platform)}" placeholder="GitHub">
+      </div>
+      <div>
+        ${i===0?'<label class="form-label">URL</label>':''}
+        <input class="form-input mono" data-si="${i}" data-key="url" value="${escHtml(l.url)}" placeholder="https://...">
+      </div>
+      <button class="btn-danger" onclick="removeSocialLink(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addSocialLink() {
+  DB.social_links.push({ platform:'', url:'', icon_key:'', order: DB.social_links.length });
+  renderSocial();
+}
+
+function removeSocialLink(i) {
+  DB.social_links.splice(i,1);
+  renderSocial();
+}
+
+function collectSocial() {
+  document.querySelectorAll('#socialList [data-si]').forEach(inp=>{
+    const i = +inp.dataset.si;
+    DB.social_links[i][inp.dataset.key] = inp.value;
+  });
+}
+
+async function saveProfile() {
+  const body = {
+    full_name: gv('pf_fullname'), role: gv('pf_role'), tagline: gv('pf_tagline'),
+    bio: gv('pf_bio'), email: gv('pf_email'), location: gv('pf_location'),
+  };
+  try {
+    const r = await apiJson(API.profileSave, body);
+    if(r.ok) { showToast('Profil saqlandi'); showMsg('profileSaved',true); if(DB.profile) DB.profile = {...DB.profile,...body}; }
+    else showMsg('profileErr', true, r.error||'Xato');
+  } catch(e){ showMsg('profileErr', true, 'Server xatosi'); }
+}
+
+async function saveSocial() {
+  collectSocial();
+  try {
+    const r = await apiJson(API.socialSave, { links: DB.social_links });
+    if(r.ok) showMsg('socialSaved', true);
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// HERO STATLAR
+// ════════════════════════════════════════════════════════
+function renderStats() {
+  const el = document.getElementById('statsList');
+  if(!el) return;
+  el.innerHTML = DB.hero_stats.map((s,i)=>`
+    <div class="form-panel" style="margin-bottom:10px;">
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 100px 80px auto;gap:10px;align-items:end;">
+        <div>
+          ${i===0?'<label class="form-label">Yorliq</label>':''}
+          <input class="form-input" data-si="${i}" data-key="label" value="${escHtml(s.label)}" placeholder="Loyiha">
+        </div>
+        <div>
+          ${i===0?'<label class="form-label">Qiymat</label>':''}
+          <input class="form-input mono" data-si="${i}" data-key="value" value="${escHtml(s.value)}" placeholder="12">
+        </div>
+        <div>
+          ${i===0?'<label class="form-label">Suffiks</label>':''}
+          <input class="form-input mono" data-si="${i}" data-key="suffix" value="${escHtml(s.suffix)}" placeholder="+">
+        </div>
+        <button class="btn-danger" style="margin-top:${i===0?'20':0}px" onclick="removeStat(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addStat() {
+  DB.hero_stats.push({ label:'', value:'', suffix:'', order: DB.hero_stats.length });
+  renderStats();
+}
+
+function removeStat(i) {
+  DB.hero_stats.splice(i,1);
+  renderStats();
+}
+
+async function saveStats() {
+  document.querySelectorAll('#statsList [data-si]').forEach(inp=>{
+    DB.hero_stats[+inp.dataset.si][inp.dataset.key] = inp.value;
+  });
+  try {
+    const r = await apiJson(API.statsSave, { stats: DB.hero_stats });
+    if(r.ok){ showToast('Statlar saqlandi'); showMsg('statsSaved',true); updateCounts(); }
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// KO'NIKMALAR
+// ════════════════════════════════════════════════════════
+function renderSkills() {
+  const el = document.getElementById('skillsList');
+  if(!el) return;
+  el.innerHTML = DB.skill_categories.map((cat,ci)=>`
+    <div class="skill-cat-item">
+      <div class="skill-cat-header">
+        <input class="form-input" style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:none;padding:0;width:auto;" data-ci="${ci}" data-key="name" value="${escHtml(cat.name)}">
+        <div style="display:flex;gap:8px;">
+          <button class="btn-secondary" style="padding:5px 10px;font-size:11px;" onclick="addSkill(${ci})">+ Ko'nikma</button>
+          <button class="btn-danger" style="padding:5px 10px;" onclick="removeCat(${ci})">✕</button>
+        </div>
+      </div>
+      <div class="skill-rows" id="skills-cat-${ci}">
+        ${cat.skills.map((s,si)=>skillRow(ci,si,s)).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function skillRow(ci,si,s) {
+  return `<div class="skill-item">
+    <input class="skill-name-input" data-ci="${ci}" data-si="${si}" data-key="name" value="${escHtml(s.name)}" placeholder="Texnologiya nomi">
+    <input class="skill-level-input" type="number" min="0" max="100" data-ci="${ci}" data-si="${si}" data-key="level" value="${s.level}" oninput="updateBar(this)">
+    <div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:${s.level}%"></div></div>
+    <button class="btn-icon" onclick="removeSkill(${ci},${si})">✕</button>
+  </div>`;
+}
+
+function updateBar(input) {
+  const bar = input.closest('.skill-item').querySelector('.skill-bar-fill');
+  if(bar) bar.style.width = Math.min(100, Math.max(0, +input.value||0)) + '%';
+}
+
+function addSkillCat() {
+  DB.skill_categories.push({ name:'Yangi kategoriya', slug:'', order: DB.skill_categories.length, skills:[] });
+  renderSkills();
+}
+
+function removeCat(ci) {
+  DB.skill_categories.splice(ci,1);
+  renderSkills();
+}
+
+function addSkill(ci) {
+  DB.skill_categories[ci].skills.push({ name:'', level:50, order: DB.skill_categories[ci].skills.length });
+  renderSkills();
+}
+
+function removeSkill(ci,si) {
+  DB.skill_categories[ci].skills.splice(si,1);
+  renderSkills();
+}
+
+async function saveSkills() {
+  // collect
+  document.querySelectorAll('[data-ci][data-key]').forEach(inp=>{
+    const ci=+inp.dataset.ci, si=inp.dataset.si!==undefined?+inp.dataset.si:-1, k=inp.dataset.key;
+    if(si>=0) DB.skill_categories[ci].skills[si][k] = k==='level'? +inp.value : inp.value;
+    else DB.skill_categories[ci][k] = inp.value;
+  });
+  try {
+    const r = await apiJson(API.skillsSave, { categories: DB.skill_categories });
+    if(r.ok){ showToast("Ko'nikmalar saqlandi"); showMsg('skillsSaved',true); updateCounts(); }
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// TAJRIBA
+// ════════════════════════════════════════════════════════
+function renderXP() {
+  const el = document.getElementById('xpList');
+  if(!el) return;
+  el.innerHTML = DB.experiences.map((x,i)=>`
+    <div class="xp-item">
+      <div>
+        <label class="form-label">Lavozim *</label>
+        <input class="form-input" data-xi="${i}" data-key="role_title" value="${escHtml(x.role_title)}" placeholder="Backend dasturchi">
+      </div>
+      <div>
+        <label class="form-label">Tashkilot *</label>
+        <input class="form-input" data-xi="${i}" data-key="organization" value="${escHtml(x.organization)}" placeholder="Kompaniya nomi">
+      </div>
+      <div>
+        <label class="form-label">Davr</label>
+        <input class="form-input" data-xi="${i}" data-key="period" value="${escHtml(x.period)}" placeholder="2023 — HOZIR">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding-top:22px;">
+        <button class="check-row" onclick="toggleXPCurrent(${i})">
+          <span class="check-box ${x.is_current?'checked':''}" id="xp_curr_${i}"></span>
+          <span class="check-label">Hozirgi ish joyi</span>
+        </button>
+      </div>
+      <div class="xp-full">
+        <label class="form-label">Tavsif</label>
+        <textarea class="form-textarea" rows="3" data-xi="${i}" data-key="description">${escHtml(x.description)}</textarea>
+      </div>
+      <div class="xp-full" style="display:flex;justify-content:flex-end;">
+        <button class="btn-danger" onclick="removeXP(${i})">O'CHIRISH</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleXPCurrent(i) {
+  DB.experiences[i].is_current = !DB.experiences[i].is_current;
+  const box = document.getElementById('xp_curr_'+i);
+  if(box) box.className = 'check-box ' + (DB.experiences[i].is_current?'checked':'');
+}
+
+function addXP() {
+  DB.experiences.push({ role_title:'', organization:'', period:'', description:'', is_current:false, order: DB.experiences.length });
+  renderXP();
+}
+
+function removeXP(i) {
+  DB.experiences.splice(i,1);
+  renderXP();
+}
+
+async function saveExperience() {
+  document.querySelectorAll('[data-xi][data-key]').forEach(inp=>{
+    DB.experiences[+inp.dataset.xi][inp.dataset.key] = inp.value;
+  });
+  try {
+    const r = await apiJson(API.xpSave, { items: DB.experiences });
+    if(r.ok){ showToast('Tajriba saqlandi'); showMsg('xpSaved',true); updateCounts(); }
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// LOYIHALAR
+// ════════════════════════════════════════════════════════
+function renderProjects() {
+  const el = document.getElementById('projectsTable');
+  const sub = document.getElementById('projSub');
+  const ft = document.getElementById('projFooter');
+  if(!el) return;
+  if(sub) sub.textContent = `// ${DB.projects.length} ta yozuv · list_editable: featured, nashr, tartib`;
+  if(ft) ft.textContent = `${DB.projects.length} ta · 1 sahifa`;
+  el.innerHTML = DB.projects.map((p,i)=>projectRow(p,i)).join('');
+}
+
+function projectRow(p,i) {
+  const fn = p.is_featured, pn = p.is_published;
+  return `<div class="tbl-row project-cols">
+    <span class="row-num">${String(i+1).padStart(2,'0')}</span>
+    <div style="min-width:0;">
+      <div class="row-title">${escHtml(p.title)}</div>
+      <div class="row-slug">/${p.slug}</div>
+    </div>
+    <div class="row-tech">${escHtml(p.tech.join(' · '))}</div>
+    <button class="pill-btn ${fn?'pill-on':'pill-off'}" onclick="toggleProj(${p.id},'is_featured',this)" style="width:88px;">${fn?'● featured':'○ oddiy'}</button>
+    <button class="pill-btn ${pn?'pill-on':'pill-off'}" onclick="toggleProj(${p.id},'is_published',this)" style="width:88px;">${pn?'● nashr':'○ qoralama'}</button>
+    <input class="order-input" value="${p.order}" onchange="toggleProj(${p.id},'order',null,this.value)" title="Tartib">
+    <span class="row-date">${p.date||'–'}</span>
+    <button class="btn-icon" onclick="openProjectEditId(${p.id})" title="Tahrirlash">✎</button>
+  </div>`;
+}
+
+async function toggleProj(id, key, btn, val) {
+  try {
+    const r = await apiJson(API.projToggle, { id, key, value: val });
+    if(r.ok) {
+      const p = DB.projects.find(x=>x.id===id);
+      if(p) {
+        if(key==='is_featured') p.is_featured = r.is_featured;
+        if(key==='is_published') p.is_published = r.is_published;
+        if(key==='order') p.order = r.order;
+      }
+      if(btn && key!=='order') {
+        const on = key==='is_featured'?r.is_featured:r.is_published;
+        btn.className = 'pill-btn '+(on?'pill-on':'pill-off');
+        btn.textContent = key==='is_featured'?(on?'● featured':'○ oddiy'):(on?'● nashr':'○ qoralama');
+      }
+      updateCounts();
+    }
+  } catch(e){ showToast('Xato','error'); }
+}
+
+function openProjectEditId(id) {
+  const p = DB.projects.find(x=>x.id===id);
+  goScreen('project-edit');
+  if(p) fillProjectEdit(p);
+}
+
+function openProjectEdit(p) {
+  if(!p) {
+    document.getElementById('pe_id').value = '';
+    setVal('pe_title',''); setVal('pe_summary',''); setVal('pe_desc','');
+    setVal('pe_demo',''); setVal('pe_repo','');
+    document.getElementById('pe_slug_preview').textContent = '–';
+    document.getElementById('peTitle').textContent = 'Yangi loyiha';
+    document.getElementById('pe_delete_btn').style.display = 'none';
+    setCheck('pe_featured', false);
+    setCheck('pe_published', true);
+    clearTags('pe_tech_list');
+    clearCover('pe_cover_drop','pe_cover_name','pe_cover_preview');
+    document.getElementById('pe_cover_current').textContent = '';
+    document.getElementById('pe_cover_input').value = '';
+  }
+}
+
+function fillProjectEdit(p) {
+  document.getElementById('pe_id').value = p.id;
+  setVal('pe_title', p.title);
+  setVal('pe_summary', p.summary);
+  setVal('pe_desc', p.description);
+  setVal('pe_demo', p.demo_url);
+  setVal('pe_repo', p.repo_url);
+  document.getElementById('pe_slug_preview').textContent = p.slug || '–';
+  document.getElementById('peTitle').textContent = 'Loyihani tahrirlash';
+  document.getElementById('pe_delete_btn').style.display = '';
+  setCheck('pe_featured', p.is_featured);
+  setCheck('pe_published', p.is_published);
+  clearTags('pe_tech_list');
+  (p.tech||[]).forEach(t=>addTagValue('pe_tech_list',t));
+  clearCover('pe_cover_drop','pe_cover_name','pe_cover_preview');
+  document.getElementById('pe_cover_input').value = '';
+  const cc = document.getElementById('pe_cover_current');
+  if(cc) cc.textContent = p.cover_url ? '// mavjud rasm: ' + p.cover_url.split('/').pop() : '';
+}
+
+async function saveProject() {
+  const title = gv('pe_title').trim();
+  if(!title){ showMsg('peErr',true,'Nomi majburiy'); return; }
+  const fd = new FormData();
+  fd.append('id', gv('pe_id'));
+  fd.append('title', title);
+  fd.append('summary', gv('pe_summary'));
+  fd.append('description', gv('pe_desc'));
+  fd.append('demo_url', gv('pe_demo'));
+  fd.append('repo_url', gv('pe_repo'));
+  fd.append('is_featured', document.getElementById('pe_featured').value);
+  fd.append('is_published', document.getElementById('pe_published').value);
+  const techTags = [...document.querySelectorAll('#pe_tech_list .tag-item')].map(t=>t.dataset.value||'').filter(Boolean);
+  fd.append('tech', techTags.join(','));
+  const coverFile = document.getElementById('pe_cover_input').files[0];
+  if(coverFile) fd.append('cover', coverFile);
+  try {
+    const r = await apiForm(API.projSave, fd);
+    if(r.ok){
+      showToast('Loyiha saqlandi'); showMsg('peSaved',true);
+      await loadData();
+      goScreen('projects');
+    } else showMsg('peErr',true, r.error||'Xato');
+  } catch(e){ showMsg('peErr',true,'Server xatosi'); }
+}
+
+async function deleteProject() {
+  const id = +gv('pe_id');
+  if(!id || !confirm('Loyihani o\'chirish?')) return;
+  try {
+    const r = await apiJson(API.projDelete, { id });
+    if(r.ok){ showToast('O\'chirildi'); await loadData(); goScreen('projects'); }
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// BLOG
+// ════════════════════════════════════════════════════════
+function renderBlog() {
+  const el = document.getElementById('blogTable');
+  const sub = document.getElementById('blogSub');
+  if(!el) return;
+  if(sub) sub.textContent = `// ${DB.blog.length} ta yozuv · list_editable: status`;
+  el.innerHTML = DB.blog.map(b=>`
+    <div class="tbl-row blog-cols">
+      <div style="min-width:0;">
+        <div class="row-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(b.title)}</div>
+        <div class="row-slug">/${b.slug}</div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8A92A0;">${escHtml(b.category||'–')}</span>
+      <button class="pill-btn ${b.status==='published'?'pill-on':'pill-off'}" onclick="toggleBlog(${b.id},this)" style="width:116px;">${b.status==='published'?'● nashr':'○ qoralama'}</button>
+      <span class="row-date">${b.date||b.created||'–'}</span>
+      <button class="btn-icon" onclick="openBlogEditId(${b.id})" title="Tahrirlash">✎</button>
+    </div>`).join('');
+}
+
+async function toggleBlog(id, btn) {
+  try {
+    const r = await apiJson(API.blogToggle, { id });
+    if(r.ok){
+      const b = DB.blog.find(x=>x.id===id);
+      if(b) b.status = r.status;
+      if(btn){
+        const on = r.status==='published';
+        btn.className='pill-btn '+(on?'pill-on':'pill-off');
+        btn.textContent = on?'● nashr':'○ qoralama';
+      }
+      updateCounts();
+    }
+  } catch(e){ showToast('Xato','error'); }
+}
+
+function openBlogEditId(id) {
+  const b = DB.blog.find(x=>x.id===id);
+  goScreen('blog-edit');
+  if(b) fillBlogEdit(b);
+}
+
+function openBlogEdit(b) {
+  if(!b){
+    document.getElementById('be_id').value='';
+    setVal('be_title',''); setVal('be_excerpt',''); setVal('be_body','');
+    document.getElementById('beTitle').textContent = 'Yangi post';
+    document.getElementById('be_delete_btn').style.display = 'none';
+    populateBlogCats(null);
+    clearCover('be_cover_drop','be_cover_name','be_cover_preview');
+    document.getElementById('be_cover_input').value='';
+  }
+}
+
+function fillBlogEdit(b) {
+  document.getElementById('be_id').value=b.id;
+  setVal('be_title',b.title); setVal('be_excerpt',b.excerpt||''); setVal('be_body',b.body||'');
+  document.getElementById('beTitle').textContent = 'Postni tahrirlash';
+  document.getElementById('be_delete_btn').style.display='';
+  populateBlogCats(b.category_id);
+  const statusEl = document.getElementById('be_status');
+  if(statusEl) statusEl.value = b.status || 'draft';
+  clearCover('be_cover_drop','be_cover_name','be_cover_preview');
+  document.getElementById('be_cover_input').value='';
+}
+
+function populateBlogCats(selectedId) {
+  const sel = document.getElementById('be_category');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— kategoriyasiz —</option>' +
+    DB.blog_categories.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${escHtml(c.name)}</option>`).join('');
+}
+
+async function saveBlog() {
+  const title = gv('be_title').trim();
+  if(!title){ showMsg('beErr',true,'Sarlavha majburiy'); return; }
+  const fd = new FormData();
+  fd.append('id', gv('be_id'));
+  fd.append('title', title);
+  fd.append('excerpt', gv('be_excerpt'));
+  fd.append('body', gv('be_body'));
+  fd.append('status', document.getElementById('be_status').value);
+  const catId = document.getElementById('be_category').value;
+  if(catId) fd.append('category_id', catId);
+  const coverFile = document.getElementById('be_cover_input').files[0];
+  if(coverFile) fd.append('cover', coverFile);
+  try {
+    const r = await apiForm(API.blogSave, fd);
+    if(r.ok){ showToast('Post saqlandi'); showMsg('beSaved',true); await loadData(); goScreen('blog'); }
+    else showMsg('beErr',true, r.error||'Xato');
+  } catch(e){ showMsg('beErr',true,'Server xatosi'); }
+}
+
+async function deleteBlog() {
+  const id = +gv('be_id');
+  if(!id || !confirm('Postni o\'chirish?')) return;
+  try {
+    const r = await apiJson(API.blogDelete, { id });
+    if(r.ok){ showToast('O\'chirildi'); await loadData(); goScreen('blog'); }
+    else showToast(r.error||'Xato','error');
+  } catch(e){ showToast('Server xatosi','error'); }
+}
+
+// ════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════
+function gv(id){ const e=document.getElementById(id); return e?e.value:''; }
+function setVal(id,v){ const e=document.getElementById(id); if(e) e.value=v||''; }
+function escHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+function setCheck(id, val) {
+  document.getElementById(id).value = val ? 'true' : 'false';
+  const box = document.getElementById(id+'_box');
+  if(box){ box.className='check-box '+(val?'checked':''); box.textContent=val?'✓':''; }
+}
+
+function toggleCheck(id) {
+  const el = document.getElementById(id);
+  const cur = el.value === 'true';
+  setCheck(id, !cur);
+}
+
+function addTag(inputId, listId) {
+  const inp = document.getElementById(inputId);
+  const val = (inp.value||'').trim();
+  if(!val) return;
+  addTagValue(listId, val);
+  inp.value='';
+}
+
+function addTagValue(listId, val) {
+  const list = document.getElementById(listId);
+  if(!list) return;
+  const span = document.createElement('span');
+  span.className='tag-item';
+  span.dataset.value=val;
+  span.innerHTML = escHtml(val)+'<span class="tag-remove" onclick="this.parentElement.remove()">✕</span>';
+  list.appendChild(span);
+}
+
+function clearTags(listId){ const el=document.getElementById(listId); if(el) el.innerHTML=''; }
+
+function handleCoverFile(input, dropId, nameId, previewId) {
+  const file = input.files[0];
+  if(!file) return;
+  const nameEl = document.getElementById(nameId);
+  const previewEl = document.getElementById(previewId);
+  const drop = document.getElementById(dropId);
+  if(nameEl){ nameEl.textContent=file.name; nameEl.style.display='block'; }
+  if(previewEl){
+    const fr=new FileReader();
+    fr.onload=e=>{ previewEl.src=e.target.result; previewEl.style.display='block'; };
+    fr.readAsDataURL(file);
+  }
+  if(drop) drop.style.borderColor='#E0A458';
+}
+
+function clearCover(dropId, nameId, previewId) {
+  const nameEl=document.getElementById(nameId);
+  const previewEl=document.getElementById(previewId);
+  const drop=document.getElementById(dropId);
+  if(nameEl){ nameEl.textContent=''; nameEl.style.display='none'; }
+  if(previewEl){ previewEl.src=''; previewEl.style.display='none'; }
+  if(drop) drop.style.borderColor='';
+}
+
+// Title -> slug preview
+document.addEventListener('input', e=>{
+  if(e.target.id==='pe_title'){
+    const slug = e.target.value.toLowerCase().replace(/[^a-z0-9\-]+/g,'-').replace(/^-+|-+$/g,'');
+    document.getElementById('pe_slug_preview').textContent = slug||'–';
+  }
+});
+
+// Global search — simple filter across screens
+document.getElementById('globalSearch').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase();
+  if(!q) return;
+  document.querySelectorAll('.tbl-row').forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(q)?'':'none';
+  });
+});
+document.getElementById('globalSearch').addEventListener('search', e=>{
+  if(!e.target.value) document.querySelectorAll('.tbl-row').forEach(r=>r.style.display='');
+});
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>

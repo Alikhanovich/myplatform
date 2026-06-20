@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} — {% if site_profile %}{{ site_profile.full_name }}{% else %}Portfolio{% endif %}{% endblock %}
+{% block meta_description %}{{ post.excerpt }}{% endblock %}
+
+{% block content %}
+  <article class="section" id="writing" data-hud-label="05 · YOZUV" style="padding-top:clamp(40px,9vh,96px);">
+    <div class="section-head" data-reveal style="margin-bottom:18px;">
+      <a class="detail-back" href="{% url 'blog:post_list' %}">← orqaga</a>
+      <span class="section-note">[ 05 / yozuv ]</span>
+    </div>
+
+    <div class="post-meta" data-reveal style="margin-bottom:8px;">
+      {{ post.published_at|date:"Y.m.d" }}{% if post.category %} · <a href="{{ post.category.get_absolute_url }}" style="color:var(--signal);text-decoration:none;">{{ post.category.name|upper }}</a>{% endif %}
+    </div>
+
+    <h1 class="detail-title" data-reveal>{{ post.title }}</h1>
+    <p class="detail-summary" data-reveal>{{ post.excerpt }}</p>
+
+    {% if post.cover_image %}
+      <div class="detail-cover" data-reveal>
+        <img src="{{ post.cover_image.url }}" alt="{{ post.title }}">
+      </div>
+    {% endif %}
+
+    <div class="detail-body" data-reveal>{{ post.body|linebreaks }}</div>
+
+    {% if post.related_projects.all %}
+      <div data-reveal style="border-top:1px solid var(--line); margin-top:32px; padding-top:22px;">
+        <div class="skill-cat-label">// bog'liq loyihalar</div>
+        {% for project in post.related_projects.all %}
+          {% if project.is_published %}
+            <a class="detail-next" href="{{ project.get_absolute_url }}" style="margin:0 0 8px;">{{ project.title }} →</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </article>
+{% endblock %}

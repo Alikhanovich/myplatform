@@ -1,0 +1,17 @@
+{# Sticky navigatsiya. Bo'lim havolalari bosh sahifaning anchorlariga ketadi. #}
+<nav class="nav">
+  <a class="nav-brand" href="{% url 'core:home' %}">
+    <span class="mark"></span>
+    {% if site_profile %}{{ site_profile.full_name }}{% else %}PORTFOLIO{% endif %}
+  </a>
+
+  <button class="nav-toggle" data-nav-toggle aria-label="Menyu">MENU</button>
+
+  <div class="nav-links" data-nav-links>
+    <a href="{% url 'core:home' %}#about">Tajriba</a>
+    <a href="{% url 'core:home' %}#skills">Ko'nikma</a>
+    <a href="{% url 'core:project_list' %}">Loyiha</a>
+    <a href="{% url 'blog:post_list' %}">Yozuv</a>
+    <a class="cta" href="{% url 'core:home' %}#contact">Aloqa ↗</a>
+  </div>
+</nav>

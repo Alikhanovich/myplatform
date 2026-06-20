@@ -1,0 +1,53 @@
+# Render.com "Blueprint" — bitta web service + managed PostgreSQL.
+# Dashboard -> New -> Blueprint -> repo'ni tanlang. sync:false bo'lganlarni
+# Render UI'da qo'lda kiritasiz (maxfiy qiymatlar).
+services:
+  - type: web
+    name: portfolio
+    runtime: python
+    plan: free
+    buildCommand: "bash build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHON_VERSION
+        value: 3.12.7
+
+      # Django asoslari
+      - key: SECRET_KEY
+        generateValue: true          # Render avtomatik yaratadi
+      - key: ALLOWED_HOSTS
+        sync: false                  # masalan: portfolio.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false                  # masalan: https://portfolio.onrender.com
+      - key: ADMIN_URL
+        value: studio-panel/
+
+      # Ma'lumotlar bazasi (quyidagi databases blokidan)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: portfolio-db
+          property: connectionString
+
+      # Cloudinary (media)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+      # Email (contact form)
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: CONTACT_RECIPIENT_EMAIL
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+
+databases:
+  - name: portfolio-db
+    plan: free

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Loyihalar — {% if site_profile %}{{ site_profile.full_name }}{% else %}Portfolio{% endif %}{% endblock %}
+{% block meta_description %}Barcha loyihalar — backend, mobil va SaaS tizimlari.{% endblock %}
+
+{% block content %}
+  <section class="section" id="work" data-hud-label="04 · LOYIHALAR" style="padding-top:clamp(40px,9vh,96px);">
+    <div style="margin-bottom:20px;">
+      <a href="/" class="detail-back">← bosh sahifaga</a>
+    </div>
+    <div class="section-ghost" aria-hidden="true">04</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">04</span>
+      <h2 class="section-title">LOYIHALAR</h2>
+      <span class="section-note">// {{ paginator.count|stringformat:"02d" }} ta</span>
+    </div>
+
+    {% if projects %}
+      <div class="proj-grid">
+        {% for project in projects %}
+          <a class="proj-card" data-reveal href="{{ project.get_absolute_url }}">
+            <div class="proj-cover{% if not project.cover_image %} placeholder{% endif %}">
+              {% if project.cover_image %}
+                <img src="{{ project.cover_image.url }}" alt="{{ project.title }}">
+              {% else %}
+                <span class="cover-tag">[ cover ]</span>
+              {% endif %}
+              <span class="cover-num">{{ forloop.counter|stringformat:"02d" }}</span>
+            </div>
+            <div class="proj-body">
+              {% if project.is_featured %}<span class="badge-featured">Featured</span>{% endif %}
+              <h3 class="proj-title">{{ project.title }}</h3>
+              <p class="proj-summary">{{ project.summary }}</p>
+              <div class="tech-list">
+                {% for tech in project.technologies.all %}<span>{{ tech.name }}</span>{% endfor %}
+              </div>
+              <div class="proj-view">view ↗</div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <nav class="pagination">
+          {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← oldingi</a>{% endif %}
+          <span>{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+          {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">keyingi →</a>{% endif %}
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="empty-state" data-reveal>// loyihalar tez orada qo'shiladi</div>
+    {% endif %}
+  </section>
+{% endblock %}

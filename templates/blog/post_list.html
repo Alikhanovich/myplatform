@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blog{% if active_category %} · {{ active_category.name }}{% endif %} — {% if site_profile %}{{ site_profile.full_name }}{% else %}Portfolio{% endif %}{% endblock %}
+{% block meta_description %}Yozuvlar — Django, Flutter va tizim qurish haqida.{% endblock %}
+
+{% block content %}
+  <section class="section" id="writing" data-hud-label="05 · YOZUVLAR" style="padding-top:clamp(40px,9vh,96px);">
+    <div style="margin-bottom:20px;">
+      <a href="/" class="detail-back">← bosh sahifaga</a>
+    </div>
+    <div class="section-ghost" aria-hidden="true">05</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">05</span>
+      <h2 class="section-title">BLOG</h2>
+      <span class="section-note">// yozuvlar</span>
+    </div>
+
+    {% if categories %}
+      <div class="cat-filter" data-reveal>
+        <a href="{% url 'blog:post_list' %}" class="{% if not active_category %}active{% endif %}">hammasi</a>
+        {% for cat in categories %}
+          <a href="{{ cat.get_absolute_url }}" class="{% if active_category and active_category.pk == cat.pk %}active{% endif %}">{{ cat.name }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% for post in posts %}
+      <a class="post-row" data-reveal href="{{ post.get_absolute_url }}">
+        <div class="post-meta">{{ post.published_at|date:"Y.m" }}{% if post.category %} · {{ post.category.name|upper }}{% endif %}</div>
+        <div>
+          <h3 class="post-title">{{ post.title }}</h3>
+          <p class="post-excerpt">{{ post.excerpt }}</p>
+        </div>
+        <div class="post-read">o'qish →</div>
+      </a>
+    {% empty %}
+      <div class="empty-state" data-reveal>// hali yozilmagan. birinchi yozuv yo'lda.</div>
+    {% endfor %}
+
+    {% if is_paginated %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← oldingi</a>{% endif %}
+        <span>{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">keyingi →</a>{% endif %}
+      </nav>
+    {% endif %}
+  </section>
+{% endblock %}

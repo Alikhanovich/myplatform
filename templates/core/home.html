@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block boot %}
+  {# Boot sequence — faqat bosh sahifada (intro). motion.js boshqaradi. #}
+  <div class="boot" data-boot>
+    <div class="boot-inner">
+      <div class="boot-line signal" data-bootline>&gt; SYSTEM.INIT</div>
+      <div class="boot-line" data-bootline>&gt; loading modules ............ ok</div>
+      <div class="boot-line" data-bootline>&gt; three.js renderer ......... ok</div>
+      <div class="boot-line" data-bootline>&gt; intersection.observer ..... ok</div>
+      <div class="boot-line" data-bootline>&gt; mounting portfolio.sys ....</div>
+      <div class="boot-name" data-bootline>{% if profile %}{{ profile.full_name|upper }}{% else %}PORTFOLIO{% endif %}</div>
+      <div class="boot-bar-track"><div class="boot-bar" data-bootbar></div></div>
+      <div class="boot-meta"><span>Booting</span><span class="pct" data-bootpct>000%</span></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+  {# ============================= HERO ============================= #}
+  <header class="hero">
+    <div>
+      <div class="hero-kicker" data-hero>01 · PORTFOLIO / {% now "Y" %}</div>
+      <h1 class="hero-title" data-hero>{% if profile %}{{ profile.full_name }}{% else %}Abror Karimov{% endif %}</h1>
+      <p class="hero-lead" data-hero>{% if profile %}{{ profile.tagline }}{% else %}Tizimlar quraman — hujjat avtomatlashtirishdan SaaS mahsulotlargacha.{% endif %}</p>
+      {% if profile and profile.bio %}<p class="hero-sub" data-hero>{{ profile.bio }}</p>{% endif %}
+
+      {% if hero_stats %}
+        <div class="hero-stats" data-hero>
+          {% for stat in hero_stats %}
+            <div>
+              <div class="stat-value"><span data-count="{{ stat.value }}">{{ stat.value }}</span>{% if stat.suffix %}<span class="suffix">{{ stat.suffix }}</span>{% endif %}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div data-hero>
+      {% include "partials/_hero_canvas.html" %}
+    </div>
+  </header>
+
+  {# ============================ MARQUEE =========================== #}
+  {% if skill_categories %}
+    <div class="marquee-wrap" aria-hidden="true">
+      <div class="marquee" data-marquee>
+        {% for _ in "12" %}<span>{% for cat in skill_categories %}{% for s in cat.skills.all %}{{ s.name }}&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;{% endfor %}{% endfor %}</span>{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# ===================== 02 · TAJRIBA / ABOUT ===================== #}
+  <section class="section" id="about" data-hud-label="02 · TAJRIBA">
+    <div class="section-ghost" aria-hidden="true">02</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">02</span>
+      <h2 class="section-title">TAJRIBA</h2>
+      <span class="section-note">// professional</span>
+    </div>
+    {% if profile and profile.bio %}
+      <p class="section-lead" data-reveal>{{ profile.bio }}</p>
+    {% else %}
+      <p class="section-lead" data-reveal>Men murakkab jarayonlarni ishonchli, boshqariladigan tizimlarga aylantiraman.</p>
+    {% endif %}
+
+    {% for xp in experiences %}
+      <div class="xp-row" data-reveal>
+        <div class="xp-period">{{ xp.period }}</div>
+        <div>
+          <h3 class="xp-role">{{ xp.role_title }}</h3>
+          <div class="xp-org">{{ xp.organization }}{% if xp.is_current %} · <span class="xp-current">HOZIR</span>{% endif %}</div>
+          <p class="xp-desc">{{ xp.description }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state" data-reveal>// tajriba tez orada qo'shiladi</div>
+    {% endfor %}
+  </section>
+
+  {# ==================== 03 · KO'NIKMALAR ========================= #}
+  <section class="section" id="skills" data-hud-label="03 · KO'NIKMA">
+    <div class="section-ghost" aria-hidden="true">03</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">03</span>
+      <h2 class="section-title">KO'NIKMALAR</h2>
+      <span class="section-note">// 0—100 kalibr</span>
+    </div>
+
+    {% if skill_categories %}
+      <div class="skills-grid">
+        {% for cat in skill_categories %}
+          <div data-reveal>
+            <div class="skill-cat-label">// {{ cat.name|upper }}</div>
+            {% for s in cat.skills.all %}
+              <div class="skill-row">
+                <div class="skill-meta"><span>{{ s.name }}</span><span class="lvl">{{ s.level }}</span></div>
+                <div class="skill-track"><div class="skill-bar" data-bar style="width:{{ s.level }}%"></div></div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state" data-reveal>// ko'nikmalar tez orada qo'shiladi</div>
+    {% endif %}
+  </section>
+
+  {# ===================== 04 · LOYIHALAR ========================== #}
+  <section class="section" id="work" data-hud-label="04 · LOYIHA">
+    <div class="section-ghost" aria-hidden="true">04</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">04</span>
+      <h2 class="section-title">LOYIHALAR</h2>
+      <span class="section-note">
+        <a href="{% url 'core:project_list' %}" style="color:inherit;text-decoration:none;">// hammasi ↗</a>
+      </span>
+    </div>
+
+    {% if featured_projects %}
+      <div class="proj-grid">
+        {% for project in featured_projects %}
+          <a class="proj-card" data-reveal href="{{ project.get_absolute_url }}">
+            <div class="proj-cover{% if not project.cover_image %} placeholder{% endif %}">
+              {% if project.cover_image %}
+                <img src="{{ project.cover_image.url }}" alt="{{ project.title }}">
+              {% else %}
+                <span class="cover-tag">[ cover ]</span>
+              {% endif %}
+              <span class="cover-num">{{ forloop.counter|stringformat:"02d" }}</span>
+            </div>
+            <div class="proj-body">
+              {% if project.is_featured %}<span class="badge-featured">Featured</span>{% endif %}
+              <h3 class="proj-title">{{ project.title }}</h3>
+              <p class="proj-summary">{{ project.summary }}</p>
+              <div class="tech-list">
+                {% for tech in project.technologies.all %}<span>{{ tech.name }}</span>{% endfor %}
+              </div>
+              <div class="proj-view">view ↗</div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state" data-reveal>// loyihalar tez orada qo'shiladi</div>
+    {% endif %}
+  </section>
+
+  {# ===================== 05 · YOZUVLAR =========================== #}
+  <section class="section" id="writing" data-hud-label="05 · YOZUV">
+    <div class="section-ghost" aria-hidden="true">05</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">05</span>
+      <h2 class="section-title">YOZUVLAR</h2>
+      <span class="section-note">
+        <a href="{% url 'blog:post_list' %}" style="color:inherit;text-decoration:none;">// blog ↗</a>
+      </span>
+    </div>
+
+    {% for post in latest_posts %}
+      <a class="post-row" data-reveal href="{{ post.get_absolute_url }}">
+        <div class="post-meta">{{ post.published_at|date:"Y.m" }}{% if post.category %} · {{ post.category.name|upper }}{% endif %}</div>
+        <div>
+          <h3 class="post-title">{{ post.title }}</h3>
+          <p class="post-excerpt">{{ post.excerpt }}</p>
+        </div>
+        <div class="post-read">o'qish →</div>
+      </a>
+    {% empty %}
+      <div class="empty-state" data-reveal>// hali yozilmagan. birinchi yozuv yo'lda.</div>
+    {% endfor %}
+  </section>
+
+  {# ====================== 06 · ALOQA ============================ #}
+  <section class="section" id="contact" data-hud-label="06 · ALOQA">
+    <div class="section-ghost" aria-hidden="true">06</div>
+    <div class="section-head" data-reveal>
+      <span class="section-index">06</span>
+      <h2 class="section-title">ALOQA</h2>
+      <span class="section-note">// terminal</span>
+    </div>
+
+    <div class="contact-panel" data-reveal>
+      <p class="contact-tag">// yangi tizim qurish kerakmi?</p>
+      <h2 class="contact-head">Yozing — javob beraman<span class="caret">_</span></h2>
+
+      <form class="contact-form" method="post" action="{% url 'core:contact' %}">
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_name">Ism</label>
+          {{ contact_form.name }}
+        </div>
+        <div class="field">
+          <label for="id_email">Email</label>
+          {{ contact_form.email }}
+        </div>
+        <div class="field">
+          <label for="id_message">Xabar</label>
+          {{ contact_form.message }}
+        </div>
+        {# Honeypot — odam ko'rmaydi (CSS bilan yashirilgan) #}
+        <div class="hp-field" aria-hidden="true">
+          <label for="id_website">Website</label>
+          {{ contact_form.website }}
+        </div>
+        <div><button type="submit" class="btn btn-primary">Yozib qoldiring ↗</button></div>
+      </form>
+
+      {% if site_social_links %}
+        <div class="contact-links">
+          {% for link in site_social_links %}
+            <a class="btn" href="{{ link.url }}" target="_blank" rel="noopener">{{ link.platform|upper }} ↗</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+{% endblock %}

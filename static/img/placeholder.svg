@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" role="img" aria-label="Rasm yo'q">
+  <defs>
+    <pattern id="stripe" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="12" height="12" fill="#1E2127"/>
+      <rect width="1" height="12" fill="#2C313A"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="450" fill="url(#stripe)"/>
+  <rect x="0.5" y="0.5" width="799" height="449" fill="none" stroke="#2C313A"/>
+  <text x="28" y="424" font-family="'JetBrains Mono', monospace" font-size="20" letter-spacing="2" fill="#8A92A0">[ cover ]</text>
+  <text x="772" y="40" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="18" fill="#E0A458">SYS</text>
+</svg>

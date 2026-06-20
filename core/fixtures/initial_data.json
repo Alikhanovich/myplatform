@@ -1,0 +1,364 @@
+[
+  {
+    "model": "core.siteprofile",
+    "pk": 1,
+    "fields": {
+      "full_name": "Abror Karimov",
+      "role": "Backend & Mobil dasturchi",
+      "tagline": "Tizimlar quraman — hujjat avtomatlashtirishdan SaaS mahsulotlargacha.",
+      "bio": "Django bilan backend, Flutter bilan mobil. Universitet hujjatlarini va talaba ma'lumotlarini tartibga soladigan ishonchli tizimlar. Men murakkab jarayonlarni ishonchli, boshqariladigan tizimlarga aylantiraman.",
+      "avatar": "",
+      "email": "salom@example.com",
+      "location": "Toshkent, UZ",
+      "is_active": true
+    }
+  },
+
+  {
+    "model": "core.sociallink",
+    "pk": 1,
+    "fields": { "profile": 1, "platform": "Email", "url": "mailto:salom@example.com", "icon_key": "email", "order": 0 }
+  },
+  {
+    "model": "core.sociallink",
+    "pk": 2,
+    "fields": { "profile": 1, "platform": "GitHub", "url": "https://github.com/", "icon_key": "github", "order": 1 }
+  },
+  {
+    "model": "core.sociallink",
+    "pk": 3,
+    "fields": { "profile": 1, "platform": "Telegram", "url": "https://t.me/", "icon_key": "telegram", "order": 2 }
+  },
+  {
+    "model": "core.sociallink",
+    "pk": 4,
+    "fields": { "profile": 1, "platform": "LinkedIn", "url": "https://linkedin.com/", "icon_key": "linkedin", "order": 3 }
+  },
+
+  {
+    "model": "core.herostat",
+    "pk": 1,
+    "fields": { "profile": 1, "label": "Loyiha", "value": "12", "suffix": "+", "order": 0 }
+  },
+  {
+    "model": "core.herostat",
+    "pk": 2,
+    "fields": { "profile": 1, "label": "Yil tajriba", "value": "3", "suffix": "+", "order": 1 }
+  },
+  {
+    "model": "core.herostat",
+    "pk": 3,
+    "fields": { "profile": 1, "label": "SaaS mahsulot", "value": "2", "suffix": "", "order": 2 }
+  },
+  {
+    "model": "core.herostat",
+    "pk": 4,
+    "fields": { "profile": 1, "label": "Toshkent", "value": "UZ", "suffix": "", "order": 3 }
+  },
+
+  {
+    "model": "core.skillcategory",
+    "pk": 1,
+    "fields": { "name": "Backend", "slug": "backend", "order": 0 }
+  },
+  {
+    "model": "core.skillcategory",
+    "pk": 2,
+    "fields": { "name": "Mobil", "slug": "mobil", "order": 1 }
+  },
+  {
+    "model": "core.skillcategory",
+    "pk": 3,
+    "fields": { "name": "Vositalar", "slug": "vositalar", "order": 2 }
+  },
+
+  {
+    "model": "core.skill",
+    "pk": 1,
+    "fields": { "category": 1, "name": "Django / Python", "level": 92, "order": 0 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 2,
+    "fields": { "category": 1, "name": "DRF / REST API", "level": 85, "order": 1 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 3,
+    "fields": { "category": 1, "name": "PostgreSQL", "level": 80, "order": 2 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 4,
+    "fields": { "category": 2, "name": "Flutter / Dart", "level": 84, "order": 0 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 5,
+    "fields": { "category": 2, "name": "Firebase", "level": 72, "order": 1 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 6,
+    "fields": { "category": 2, "name": "Offline-first sync", "level": 68, "order": 2 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 7,
+    "fields": { "category": 3, "name": "Git / CI", "level": 82, "order": 0 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 8,
+    "fields": { "category": 3, "name": "Docker / Linux", "level": 75, "order": 1 }
+  },
+  {
+    "model": "core.skill",
+    "pk": 9,
+    "fields": { "category": 3, "name": "Celery / queue", "level": 70, "order": 2 }
+  },
+
+  {
+    "model": "core.experience",
+    "pk": 1,
+    "fields": {
+      "profile": 1,
+      "role_title": "Backend dasturchi",
+      "organization": "Universitet IT bo'limi",
+      "period": "2023 — HOZIR",
+      "description": "Hujjat avtomatlashtirish va talaba ma'lumotlari tizimlari. Django + PostgreSQL asosida ichki admin panellar.",
+      "is_current": true,
+      "order": 0
+    }
+  },
+  {
+    "model": "core.experience",
+    "pk": 2,
+    "fields": {
+      "profile": 1,
+      "role_title": "Mobil dasturchi — freelance",
+      "organization": "Mustaqil loyihalar",
+      "period": "2022 — HOZIR",
+      "description": "Flutter bilan SaaS mahsulotlar: psixologik test platformasi va davomat tracking ilovasi.",
+      "is_current": true,
+      "order": 1
+    }
+  },
+  {
+    "model": "core.experience",
+    "pk": 3,
+    "fields": {
+      "profile": 1,
+      "role_title": "Junior dasturchi",
+      "organization": "Startap",
+      "period": "2021 — 2022",
+      "description": "Python backend va REST API'lar bilan birinchi tijoriy tajriba.",
+      "is_current": false,
+      "order": 2
+    }
+  },
+
+  {
+    "model": "blog.blogcategory",
+    "pk": 1,
+    "fields": { "name": "Django", "slug": "django" }
+  },
+  {
+    "model": "blog.blogcategory",
+    "pk": 2,
+    "fields": { "name": "Flutter", "slug": "flutter" }
+  },
+  {
+    "model": "blog.blogcategory",
+    "pk": 3,
+    "fields": { "name": "SaaS", "slug": "saas" }
+  },
+
+  {
+    "model": "blog.blogpost",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "title": "Django adminni to'liq kontent-boshqaruv paneliga aylantirish",
+      "slug": "django-admin-kontent-boshqaruv",
+      "excerpt": "list_editable, inline va prepopulated bilan texnik bo'lmagan workflow.",
+      "body": "Django admin ko'pincha shunchaki ma'lumotlar bazasi oynasi deb qaraladi. Aslida uni to'liq kontent-boshqaruv paneliga aylantirish mumkin.\n\nlist_display va list_editable ro'yxat sahifasidan turib tez tahrirlashga imkon beradi. TabularInline bog'liq yozuvlarni (masalan loyiha texnologiyalari) bitta sahifada boshqaradi.\n\nprepopulated_fields slug'ni avtomatik to'ldiradi — egasi faqat sarlavhani yozadi. Natijada texnik bilim minimal bo'lsa ham kontent qo'shish oson.",
+      "cover_image": "",
+      "status": "published",
+      "published_at": "2026-04-10T09:00:00+05:00",
+      "created_at": "2026-04-10T09:00:00+05:00",
+      "order": 0
+    }
+  },
+  {
+    "model": "blog.blogpost",
+    "pk": 2,
+    "fields": {
+      "category": 2,
+      "title": "Offline-first davomat ilovasi: lokal sinxronizatsiya",
+      "slug": "offline-first-davomat-sinxronizatsiya",
+      "excerpt": "Internet yo'q joyda ishlaydigan, keyin sync bo'ladigan arxitektura.",
+      "body": "Davomat ilovasi ko'pincha internet bo'lmagan auditoriyalarda ishlaydi. Shuning uchun offline-first yondashuv zarur.\n\nMa'lumot avval lokal bazaga yoziladi, keyin ulanish paydo bo'lganda serverga sinxronlanadi. Konfliktlar timestamp va versiya asosida hal qilinadi.\n\nFlutter + lokal saqlash + fon sinxronizatsiyasi bilan foydalanuvchi uzilishni sezmaydi.",
+      "cover_image": "",
+      "status": "published",
+      "published_at": "2026-02-15T09:00:00+05:00",
+      "created_at": "2026-02-15T09:00:00+05:00",
+      "order": 1
+    }
+  },
+  {
+    "model": "blog.blogpost",
+    "pk": 3,
+    "fields": {
+      "category": 3,
+      "title": "Universitet hujjatlarini Celery bilan avtomatlashtirish",
+      "slug": "universitet-hujjat-celery-avtomatlashtirish",
+      "excerpt": "Fon vazifalari, navbat va xatolarni qayta urinish strategiyasi.",
+      "body": "Hujjat generatsiyasi va imzolash og'ir jarayonlar — ularni so'rov ichida bajarish foydalanuvchini kutdiradi.\n\nCelery bilan bu vazifalar fonga olinadi: navbatga qo'yiladi, ishlanadi, xato bo'lsa qayta urinadi. Foydalanuvchi natijani keyin oladi.\n\nNavbat, retry va monitoring birga ishonchli avtomatlashtirish beradi.",
+      "cover_image": "",
+      "status": "published",
+      "published_at": "2025-12-05T09:00:00+05:00",
+      "created_at": "2025-12-05T09:00:00+05:00",
+      "order": 2
+    }
+  },
+
+  {
+    "model": "core.project",
+    "pk": 1,
+    "fields": {
+      "title": "TestAble",
+      "slug": "testable",
+      "summary": "Psixologik test platformasi — adaptiv testlar va natija tahlili.",
+      "description": "TestAble — psixologik testlarni o'tkazish va natijalarni tahlil qilish platformasi.\n\nMuammo: testlar qo'lda o'tkazilar, natijalar qog'ozda yo'qolardi. Yechim: adaptiv test mexanizmi, avtomatik ballash va natija dashboardi. Django + DRF backend, Flutter mijoz.\n\nNatija: test o'tkazish vaqti qisqardi, natijalar markazlashgan bazada saqlanadi.",
+      "cover_image": "",
+      "demo_url": "",
+      "repo_url": "",
+      "is_featured": true,
+      "is_published": true,
+      "created_at": "2026-03-01",
+      "order": 0,
+      "related_post": null
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": 2,
+    "fields": {
+      "title": "Davomat",
+      "slug": "davomat",
+      "summary": "Talaba davomat tracking ilovasi — offline-first, QR bilan belgilash.",
+      "description": "Davomat — talabalar yo'qlamasini raqamlashtiruvchi mobil ilova.\n\nMuammo: qog'oz jurnal va internet uzilishi. Yechim: offline-first arxitektura, QR kod orqali tez belgilash, keyin avtomatik sinxronizatsiya. Flutter + Firebase + Django backend.\n\nNatija: yo'qlama tezlashdi, ma'lumot ishonchli sinxronlanadi.",
+      "cover_image": "",
+      "demo_url": "",
+      "repo_url": "",
+      "is_featured": true,
+      "is_published": true,
+      "created_at": "2026-01-15",
+      "order": 1,
+      "related_post": 2
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": 3,
+    "fields": {
+      "title": "DocFlow",
+      "slug": "docflow",
+      "summary": "Universitet hujjat avtomatlashtirish — shablon, imzo va arxiv oqimi.",
+      "description": "DocFlow — universitet hujjatlari uchun avtomatlashtirilgan oqim tizimi.\n\nMuammo: hujjatlar qo'lda tayyorlanar va imzolanardi. Yechim: shablonlardan generatsiya, imzo bosqichlari va arxiv. Og'ir vazifalar Celery navbatida bajariladi. Django + Celery + PostgreSQL.\n\nNatija: hujjat tayyorlash vaqti sezilarli qisqardi.",
+      "cover_image": "",
+      "demo_url": "",
+      "repo_url": "",
+      "is_featured": false,
+      "is_published": true,
+      "created_at": "2025-11-20",
+      "order": 2,
+      "related_post": 3
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": 4,
+    "fields": {
+      "title": "GradeSync",
+      "slug": "gradesync",
+      "summary": "Talaba ma'lumotlari integratsiyasi — tashqi tizimlar bilan REST sinxron.",
+      "description": "GradeSync — talaba baholari va ma'lumotlarini tashqi tizimlar bilan sinxronlovchi servis.\n\nMuammo: ma'lumotlar bir nechta tizimda tarqoq edi. Yechim: REST API orqali bir tomonlama va ikki tomonlama sinxronizatsiya, xatolarni jurnal qilish. Python + Django + REST API.\n\nNatija: ma'lumotlar bir manbada birlashdi.",
+      "cover_image": "",
+      "demo_url": "",
+      "repo_url": "",
+      "is_featured": false,
+      "is_published": true,
+      "created_at": "2025-10-05",
+      "order": 3,
+      "related_post": null
+    }
+  },
+
+  {
+    "model": "core.projecttech",
+    "pk": 1,
+    "fields": { "project": 1, "name": "Django", "order": 0 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 2,
+    "fields": { "project": 1, "name": "DRF", "order": 1 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 3,
+    "fields": { "project": 1, "name": "Flutter", "order": 2 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 4,
+    "fields": { "project": 1, "name": "PostgreSQL", "order": 3 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 5,
+    "fields": { "project": 2, "name": "Flutter", "order": 0 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 6,
+    "fields": { "project": 2, "name": "Firebase", "order": 1 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 7,
+    "fields": { "project": 2, "name": "Django", "order": 2 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 8,
+    "fields": { "project": 3, "name": "Django", "order": 0 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 9,
+    "fields": { "project": 3, "name": "Celery", "order": 1 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 10,
+    "fields": { "project": 3, "name": "PostgreSQL", "order": 2 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 11,
+    "fields": { "project": 4, "name": "Python", "order": 0 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 12,
+    "fields": { "project": 4, "name": "Django", "order": 1 }
+  },
+  {
+    "model": "core.projecttech",
+    "pk": 13,
+    "fields": { "project": 4, "name": "REST API", "order": 2 }
+  }
+]
