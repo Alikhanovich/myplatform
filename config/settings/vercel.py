@@ -77,6 +77,32 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 # --------------------------------------------------------------------------
+# Email — haqiqiy SMTP (contact form "yozib qoldiring")
+# --------------------------------------------------------------------------
+# base.py SMTP host/parolni bermaydi (faqat dev/prod beradi), shuning uchun
+# Vercel'da bularni shu yerda o'rnatamiz — aks holda Django localhost:25 ga
+# ulanmoqchi bo'lib xat yuborilmaydi.
+# Gmail App Password kerak: Google Account → Security → App Passwords.
+# Vercel → Settings → Environment Variables'ga qo'shing:
+#     EMAIL_HOST_USER       (Gmail manzilingiz)
+#     EMAIL_HOST_PASSWORD   (16 belgilik App Password)
+#     DEFAULT_FROM_EMAIL    (odatda Gmail manzilingiz)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", default=10, cast=int)
+
+# Xabar shu manzilga keladi (env bilan o'zgartirsa bo'ladi).
+CONTACT_RECIPIENT_EMAIL = config(
+    "CONTACT_RECIPIENT_EMAIL", default="Abboskhonilmnuri@gmail.com"
+)
+# from_email berilmasa, jo'natuvchi sifatida SMTP user ishlatiladi (Gmail talabi).
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "Abboskhonilmnuri@gmail.com")
+
+# --------------------------------------------------------------------------
 # Logging — xatolar Vercel konsoliga (Runtime Logs) chiqsin
 # --------------------------------------------------------------------------
 LOGGING = {
