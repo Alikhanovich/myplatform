@@ -41,7 +41,7 @@ if _vercel_url:
     VERCEL_ALLOWED_HOSTS.append(_vercel_url)
 VERCEL_ALLOWED_HOSTS += config(
     "CUSTOM_HOSTS",
-    default="tiiutest.uz,www.tiiutest.uz,3006-3009.uz,www.3006-3009.uz",
+    default="3006-3009.uz,www.3006-3009.uz",
     cast=Csv(),
 )
 
@@ -52,7 +52,6 @@ CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
     default=(
         "https://*.vercel.app,"
-        "https://tiiutest.uz,https://www.tiiutest.uz,"
         "https://3006-3009.uz,https://www.3006-3009.uz"
     ),
     cast=Csv(),
